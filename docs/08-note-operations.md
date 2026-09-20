@@ -55,24 +55,66 @@ sont pas des tâches d'ingénieur.
 
 ## 4. Fonctionnement mensuel
 
-Pilote : 5 à 10 entreprises, quelques centaines de CV par mois. À l'échelle : ~50 000 CV/mois,
-plusieurs pays.
+Montants en dollars par mois, **hors salaires**, tarifs publics constatés à confirmer par devis au
+moment de la décision. Deux scénarios chiffrés, tous deux limités à Conakry :
 
-| Poste | Pilote | À l'échelle |
-|---|---|---|
-| Hébergement de l'application | 50 – 150 $ | 400 – 1 200 $ |
-| Machines de traitement des documents | 50 – 150 $ | 300 – 1 000 $ |
-| Base de données et sauvegardes | 60 – 200 $ | 300 – 900 $ |
-| Stockage des CV | < 10 $ | 50 – 150 $ |
-| Modèles d'IA (lecture des CV) | 10 – 30 $ | 400 – 1 200 $ |
-| E-mail | 0 – 30 $ | 100 – 300 $ |
-| **SMS et WhatsApp** | **80 – 250 $** | **1 500 – 5 000 $** |
-| Surveillance et alertes | 0 – 50 $ | 100 – 300 $ |
-| **Total** | **≈ 250 – 870 $** | **≈ 3 150 – 10 050 $** |
+- **Pilote** *(janvier à mars 2027)* — environ 2 000 visites/mois, 5 à 10 entreprises, une
+  vingtaine d'offres, de l'ordre de 400 CV déposés par mois.
+- **Conakry à maturité** *(fin 2027)* — environ 20 000 candidats inscrits, 30 000 visites/mois,
+  2 000 CV/mois, 50 à 80 entreprises clientes.
 
-Deux enseignements : le coût technique du pilote est **modeste** — l'équilibre se joue sur les
-salaires et la vente, pas ici ; et **l'IA n'est pas le poste coûteux** (moins d'un centime par CV).
-Le poste qui grossit avec le succès, c'est le SMS.
+| Poste | Ce qu'il y a dedans · services candidats et base de facturation | Pilote | Conakry à maturité |
+|---|---|---|---|
+| Serveur d'application | 1 à 2 petites machines (2 vCPU, 4 Go). Hetzner, OVH, Scaleway, DigitalOcean : ~20–25 $/machine. AWS Fargate ou App Runner : facturé à l'usage | 20 – 45 $ | 60 – 120 $ |
+| Répartiteur de charge | Point d'entrée unique devant les machines. DigitalOcean ~12 $, AWS ALB ~18–25 $ + trafic. Au début il ne sert pas à la charge mais aux mises à jour sans coupure | 0 – 20 $ | 20 – 30 $ |
+| Machines de traitement des documents | Les workers qui lisent les CV. Au pilote ils tiennent sur la machine applicative. Ensuite 1 à 2 machines dédiées, éteintes quand la file est vide | 0 – 15 $ | 25 – 60 $ |
+| Base de données | PostgreSQL managé avec sauvegardes. DigitalOcean ~15 $, AWS RDS petite instance ~15–20 $ + stockage, Neon/Supabase gratuit puis ~25 $ | 15 – 35 $ | 50 – 120 $ |
+| Stockage des CV | Fichiers déposés. ~0,02 $/Go/mois ; 400 CV pèsent moins d'un Go. Cloudflare R2 ne facture pas la sortie, AWS S3 la facture ~0,09 $/Go | < 2 $ | 5 – 12 $ |
+| Diffusion et bande passante | Cloudflare, offre gratuite — suffisante bien au-delà de notre trafic | 0 $ | 0 – 20 $ |
+| Lecture des CV par les modèles | Facturé au document. OCR : AWS Textract ou Google Document AI ~1,50 $/1 000 pages. Extraction : Claude Haiku 4.5 à 1 $/M jetons entrée et 5 $/M sortie, moitié prix en batch → **~1 centime par CV de 2 pages**. Modèle ouvert auto-hébergé : coût GPU, pertinent seulement à fort volume régulier | 4 – 15 $ | 20 – 60 $ |
+| E-mail | AWS SES ~0,10 $/1 000 messages. Resend, Postmark, Brevo : gratuit jusqu'à quelques milliers/mois | 0 – 5 $ | 10 – 25 $ |
+| **SMS** | **Le seul poste vraiment sensible.** Codes de connexion, invitations aux tests, rappels. Agrégateur international (Twilio, Vonage) vers la Guinée : ~0,03 à 0,10 $/message. Agrégateur ou opérateur local (Orange, MTN) : souvent 3 à 10× moins cher, contrat à négocier. Base : ~4 messages par candidat actif | **25 – 120 $** | **120 – 500 $** |
+| Surveillance et alertes | Sentry, Grafana Cloud, Better Stack : offres gratuites suffisantes au démarrage | 0 $ | 0 – 30 $ |
+| Nom de domaine et certificats | Domaine ~15 $/an. Certificats TLS gratuits | ~2 $ | ~2 $ |
+| Sauvegardes externalisées | Copie hors du fournisseur principal, stockage froid | 2 – 5 $ | 10 – 20 $ |
+| **Total mensuel** | | **≈ 70 – 265 $** | **≈ 320 – 1 000 $** |
+
+### Et le scénario régional ?
+
+Une version précédente de cette note annonçait 3 000 à 10 000 $/mois. Ce montant correspondait à
+**50 000 CV par mois sur plusieurs pays** — un horizon 2029, pas une ligne de budget 2027. Il
+indique seulement que même à cette taille, l'infrastructure reste de l'ordre de quelques milliers
+de dollars par mois, dont environ la moitié en SMS.
+
+### Ce qui coûte n'est pas le trafic
+
+**Multiplier les visites par dix ne change presque rien au total.** Deux mille ou vingt mille
+visites par mois, c'est la même petite machine. Ce qui coûte, ce sont les **CV traités** et les
+**SMS envoyés** — deux postes qui suivent le nombre de candidats réellement actifs, pas le nombre
+de pages vues. La facture suit donc notre activité réelle, et un mois creux coûte presque le prix
+du socle.
+
+### « Je ne paie que mon trafic » : en partie, et c'est voulu
+
+- **À l'usage** — modèles d'IA, SMS, e-mail, stockage : réellement proportionnels à l'activité.
+- **À la machine** — serveur applicatif et base de données, montant fixe. À notre volume une
+  machine coûte une vingtaine de dollars ; au-delà, le prix à la machine devient nettement plus
+  avantageux que la facturation à la requête.
+
+Le répartiteur de charge n'est pas là pour la charge — à 2 000 visites/mois une seule machine
+suffit. Il est là pour **mettre à jour sans coupure**, et pour qu'ajouter une machine plus tard
+soit un réglage et non une migration.
+
+### Comment cela monte, sans rien réécrire
+
+- Serveur applicatif et workers sans état : monter en charge, c'est **en ajouter**.
+- La base grandit en taille, puis par réplicas de lecture.
+- Le stockage des fichiers est illimité par construction.
+- Le traitement des documents monte **indépendamment du site** : une rafale de 500 candidatures
+  allonge la file, elle ne ralentit pas la navigation.
+
+Rien dans l'architecture ne change entre les deux colonnes — seuls le nombre et la taille des
+machines. C'est ce que nous achetons en séparant dès le départ le site, l'API et les workers.
 
 ## 5. Les deux postes qui surprennent
 
