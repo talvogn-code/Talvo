@@ -54,6 +54,12 @@
   .dg-chip{fill:var(--surface);stroke:var(--line);stroke-width:1}
   .dg-band{fill:var(--surface-2);stroke:none}
   .dg-flag{fill:var(--flag-soft);stroke:var(--flag);stroke-width:1.2}
+  .cell-async{fill:var(--accent-soft);stroke:none}
+  .cell-ext{fill:var(--flag-soft);stroke:none}
+  .dg-grid{stroke:var(--line);stroke-width:1;fill:none}
+  .dg-cell{font-family:var(--body);font-weight:400;font-size:10px;fill:currentColor}
+  .dg-cellm{font-family:var(--mono);font-weight:400;font-size:9.5px;fill:var(--muted)}
+  .dg-head{font-family:var(--mono);font-weight:500;font-size:10px;letter-spacing:.08em;fill:var(--muted)}
   .dg-h{font-family:var(--display);font-weight:600;font-size:13.5px;fill:currentColor}
   .dg-t{font-family:var(--body);font-weight:400;font-size:12px;fill:currentColor}
   .dg-c{font-family:var(--body);font-weight:500;font-size:11.5px;fill:currentColor}
@@ -440,6 +446,197 @@
       </svg>
     </div>
     <figcaption>Les étapes teintées sont celles où TalVo crée sa valeur — et ce sont aussi celles qui n'existent chez aucun site d'annonces. L'étape 4 alimente deux listes distinctes : les candidatures reçues et les talents sourcés qui n'ont pas postulé, que le cahier des charges impose de présenter séparément.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="shead">
+    <p class="eyebrow">Figure 5</p>
+    <h2>L'architecture vue depuis le parcours</h2>
+    <p class="prose">Chaque étape du parcours, et les composants qu'elle met réellement en mouvement. Les cases vides comptent autant que les autres : elles disent ce qui n'est pas sollicité.</p>
+  </div>
+  <figure>
+    <div class="scroller">
+      <svg class="diagram" viewBox="0 0 1220 890" style="min-width:1140px;width:100%" role="img" aria-label="Matrice croisant les dix étapes du parcours avec six couches d'architecture : utilisateur, entrée web, module d'API, traitement asynchrone, données et appels externes. Les étapes 4 et 8, lecture du CV et classement, ne sollicitent ni l'entrée web ni l'API : ce sont des traitements purement asynchrones.">
+<rect class="cell-async" x="709" y="137" width="162" height="74"/>
+        <rect class="cell-ext" x="1037" y="137" width="162" height="74"/>
+        <rect class="cell-async" x="709" y="213" width="162" height="74"/>
+        <rect class="cell-async" x="709" y="289" width="162" height="74"/>
+        <rect class="cell-ext" x="1037" y="289" width="162" height="74"/>
+        <rect class="cell-async" x="709" y="365" width="162" height="74"/>
+        <rect class="cell-async" x="709" y="441" width="162" height="74"/>
+        <rect class="cell-async" x="709" y="517" width="162" height="74"/>
+        <rect class="cell-async" x="709" y="593" width="162" height="74"/>
+        <rect class="cell-ext" x="1037" y="593" width="162" height="74"/>
+        <rect class="cell-async" x="709" y="669" width="162" height="74"/>
+        <rect class="cell-ext" x="1037" y="669" width="162" height="74"/>
+        <rect class="cell-async" x="709" y="745" width="162" height="74"/>
+        <rect class="cell-ext" x="1037" y="745" width="162" height="74"/>
+        <line class="dg-grid" x1="20" y1="52" x2="1200" y2="52"/>
+        <line class="dg-grid" x1="20" y1="60" x2="1200" y2="60"/>
+        <line class="dg-grid" x1="20" y1="136" x2="1200" y2="136"/>
+        <line class="dg-grid" x1="20" y1="212" x2="1200" y2="212"/>
+        <line class="dg-grid" x1="20" y1="288" x2="1200" y2="288"/>
+        <line class="dg-grid" x1="20" y1="364" x2="1200" y2="364"/>
+        <line class="dg-grid" x1="20" y1="440" x2="1200" y2="440"/>
+        <line class="dg-grid" x1="20" y1="516" x2="1200" y2="516"/>
+        <line class="dg-grid" x1="20" y1="592" x2="1200" y2="592"/>
+        <line class="dg-grid" x1="20" y1="668" x2="1200" y2="668"/>
+        <line class="dg-grid" x1="20" y1="744" x2="1200" y2="744"/>
+        <line class="dg-grid" x1="20" y1="820" x2="1200" y2="820"/>
+        <line class="dg-grid" x1="20" y1="52" x2="20" y2="820"/>
+        <line class="dg-grid" x1="216" y1="52" x2="216" y2="820"/>
+        <line class="dg-grid" x1="380" y1="52" x2="380" y2="820"/>
+        <line class="dg-grid" x1="544" y1="52" x2="544" y2="820"/>
+        <line class="dg-grid" x1="708" y1="52" x2="708" y2="820"/>
+        <line class="dg-grid" x1="872" y1="52" x2="872" y2="820"/>
+        <line class="dg-grid" x1="1036" y1="52" x2="1036" y2="820"/>
+        <line class="dg-grid" x1="1200" y1="52" x2="1200" y2="820"/>
+        <text class="dg-head" x="30" y="44">ÉTAPE DU PARCOURS</text>
+        <text class="dg-head" x="226" y="44">UTILISATEUR</text>
+        <text class="dg-head" x="390" y="44">ENTRÉE WEB</text>
+        <text class="dg-head" x="554" y="44">MODULE D'API</text>
+        <text class="dg-head" x="718" y="44">ASYNCHRONE</text>
+        <text class="dg-head" x="882" y="44">DONNÉES</text>
+        <text class="dg-head" x="1046" y="44">APPELS EXTERNES</text>
+        <text class="dg-c" x="30" y="90">1 · Découverte</text>
+        <text class="dg-s" x="30" y="110">PUBLIC</text>
+        <text class="dg-cell" x="226" y="80">Arrive par une</text>
+        <text class="dg-cell" x="226" y="95">recherche web sur</text>
+        <text class="dg-cell" x="226" y="110">une offre</text>
+        <text class="dg-cell" x="390" y="80">Page publique rendue</text>
+        <text class="dg-cell" x="390" y="95">serveur, en cache CDN</text>
+        <text class="dg-cell" x="554" y="80">Offres — lecture seule</text>
+        <text class="dg-cellm" x="718" y="80">—</text>
+        <text class="dg-cell" x="882" y="80">Postgres, index</text>
+        <text class="dg-cell" x="882" y="95">plein texte</text>
+        <text class="dg-cellm" x="1046" y="80">—</text>
+        <text class="dg-c" x="30" y="166">2 · Inscription</text>
+        <text class="dg-s" x="30" y="186">CANDIDAT</text>
+        <text class="dg-cell" x="226" y="156">Saisit son numéro,</text>
+        <text class="dg-cell" x="226" y="171">reçoit un code</text>
+        <text class="dg-cell" x="390" y="156">Formulaire,</text>
+        <text class="dg-cell" x="390" y="171">limitation de débit</text>
+        <text class="dg-cell" x="554" y="156">Comptes &amp; accès</text>
+        <text class="dg-cell" x="718" y="156">Envoi du code</text>
+        <text class="dg-cell" x="882" y="156">users, tentatives</text>
+        <text class="dg-cell" x="1046" y="156">SMS</text>
+        <text class="dg-c" x="30" y="242">3 · Dépôt du CV</text>
+        <text class="dg-s" x="30" y="262">CANDIDAT</text>
+        <text class="dg-cell" x="226" y="232">Choisit un fichier</text>
+        <text class="dg-cell" x="226" y="247">ou photographie</text>
+        <text class="dg-cell" x="226" y="262">son CV</text>
+        <text class="dg-cell" x="390" y="232">Envoi direct au</text>
+        <text class="dg-cell" x="390" y="247">stockage, URL signée</text>
+        <text class="dg-cell" x="554" y="232">Profils &amp; CV —</text>
+        <text class="dg-cell" x="554" y="247">crée le travail</text>
+        <text class="dg-cell" x="718" y="232">Travail mis en file</text>
+        <text class="dg-cell" x="882" y="232">Stockage objet</text>
+        <text class="dg-cell" x="882" y="247">+ ligne resumes</text>
+        <text class="dg-cell" x="1046" y="232">Antivirus</text>
+        <text class="dg-c" x="30" y="318">4 · Lecture du CV</text>
+        <text class="dg-s" x="30" y="338">SYSTÈME</text>
+        <text class="dg-cell" x="226" y="308">N'attend pas —</text>
+        <text class="dg-cell" x="226" y="323">notifié quand</text>
+        <text class="dg-cell" x="226" y="338">c'est prêt</text>
+        <text class="dg-cellm" x="390" y="308">—</text>
+        <text class="dg-cellm" x="554" y="308">—</text>
+        <text class="dg-cell" x="718" y="308">Worker extraction :</text>
+        <text class="dg-cell" x="718" y="323">triage, OCR,</text>
+        <text class="dg-cell" x="718" y="338">désignation, ancrage,</text>
+        <text class="dg-cell" x="718" y="353">normalisation</text>
+        <text class="dg-cell" x="882" y="308">experiences,</text>
+        <text class="dg-cell" x="882" y="323">educations, skills</text>
+        <text class="dg-cell" x="882" y="338">+ provenance</text>
+        <text class="dg-cell" x="1046" y="308">OCR + modèle</text>
+        <text class="dg-cell" x="1046" y="323">≈ 1 centime / CV</text>
+        <text class="dg-c" x="30" y="394">5 · Validation</text>
+        <text class="dg-s" x="30" y="414">CANDIDAT</text>
+        <text class="dg-cell" x="226" y="384">Corrige ce que la</text>
+        <text class="dg-cell" x="226" y="399">machine a mal lu</text>
+        <text class="dg-cell" x="390" y="384">Écran de correction,</text>
+        <text class="dg-cell" x="390" y="399">champs douteux</text>
+        <text class="dg-cell" x="390" y="414">mis en avant</text>
+        <text class="dg-cell" x="554" y="384">Profils &amp; CV</text>
+        <text class="dg-cell" x="718" y="384">Recalcul des scores</text>
+        <text class="dg-cell" x="882" y="384">Version corrigée</text>
+        <text class="dg-cell" x="882" y="399">+ trace de l'écart</text>
+        <text class="dg-cellm" x="1046" y="384">—</text>
+        <text class="dg-c" x="30" y="470">6 · Publication de l'offre</text>
+        <text class="dg-s" x="30" y="490">ENTREPRISE</text>
+        <text class="dg-cell" x="226" y="460">Décrit le besoin,</text>
+        <text class="dg-cell" x="226" y="475">coche « tests requis »</text>
+        <text class="dg-cell" x="390" y="460">Espace professionnel</text>
+        <text class="dg-cell" x="554" y="460">Offres — refusé si</text>
+        <text class="dg-cell" x="554" y="475">entreprise non validée</text>
+        <text class="dg-cell" x="718" y="460">Indexation +</text>
+        <text class="dg-cell" x="718" y="475">calcul des scores</text>
+        <text class="dg-cell" x="882" y="460">jobs, job_skills,</text>
+        <text class="dg-cell" x="882" y="475">job_tests</text>
+        <text class="dg-cellm" x="1046" y="460">—</text>
+        <text class="dg-c" x="30" y="546">7 · Candidature</text>
+        <text class="dg-s" x="30" y="566">CANDIDAT</text>
+        <text class="dg-cell" x="226" y="536">Postule. Ne voit que</text>
+        <text class="dg-cell" x="226" y="551">le secteur s'il est</text>
+        <text class="dg-cell" x="226" y="566">en offre gratuite</text>
+        <text class="dg-cell" x="390" y="536">Page d'offre</text>
+        <text class="dg-cell" x="554" y="536">Candidatures —</text>
+        <text class="dg-cell" x="554" y="551">masquage selon</text>
+        <text class="dg-cell" x="554" y="566">l'abonnement</text>
+        <text class="dg-cell" x="718" y="536">Score de la</text>
+        <text class="dg-cell" x="718" y="551">candidature</text>
+        <text class="dg-cell" x="882" y="536">applications</text>
+        <text class="dg-cellm" x="1046" y="536">—</text>
+        <text class="dg-c" x="30" y="622">8 · Classement &amp; sourcing</text>
+        <text class="dg-s" x="30" y="642">SYSTÈME</text>
+        <text class="dg-cell" x="226" y="612">Ne voit rien — se</text>
+        <text class="dg-cell" x="226" y="627">passe entre les</text>
+        <text class="dg-cell" x="226" y="642">deux parties</text>
+        <text class="dg-cellm" x="390" y="612">—</text>
+        <text class="dg-cellm" x="554" y="612">—</text>
+        <text class="dg-cell" x="718" y="612">Worker matching :</text>
+        <text class="dg-cell" x="718" y="627">rappel sémantique</text>
+        <text class="dg-cell" x="718" y="642">puis règles pondérées</text>
+        <text class="dg-cell" x="882" y="612">match_scores</text>
+        <text class="dg-cell" x="882" y="627">+ breakdown,</text>
+        <text class="dg-cell" x="882" y="642">sourced_candidates</text>
+        <text class="dg-cell" x="1046" y="612">Embeddings</text>
+        <text class="dg-cell" x="1046" y="627">(rappel seulement)</text>
+        <text class="dg-c" x="30" y="698">9 · Test en ligne</text>
+        <text class="dg-s" x="30" y="718">CANDIDAT</text>
+        <text class="dg-cell" x="226" y="688">Reçoit l'invitation,</text>
+        <text class="dg-cell" x="226" y="703">passe le test</text>
+        <text class="dg-cell" x="390" y="688">Chaque réponse</text>
+        <text class="dg-cell" x="390" y="703">enregistrée aussitôt</text>
+        <text class="dg-cell" x="554" y="688">Tests — chronomètre</text>
+        <text class="dg-cell" x="554" y="703">autoritaire côté</text>
+        <text class="dg-cell" x="554" y="718">serveur</text>
+        <text class="dg-cell" x="718" y="688">Invitations, rappels,</text>
+        <text class="dg-cell" x="718" y="703">calcul du score</text>
+        <text class="dg-cell" x="882" y="688">test_attempts,</text>
+        <text class="dg-cell" x="882" y="703">attempt_answers,</text>
+        <text class="dg-cell" x="882" y="718">test_results</text>
+        <text class="dg-cell" x="1046" y="688">SMS + e-mail</text>
+        <text class="dg-c" x="30" y="774">10 · Shortlist &amp; décision</text>
+        <text class="dg-s" x="30" y="794">ENTREPRISE</text>
+        <text class="dg-cell" x="226" y="764">Lit la fiche et son</text>
+        <text class="dg-cell" x="226" y="779">pourquoi, décide</text>
+        <text class="dg-cell" x="390" y="764">Tableau de bord</text>
+        <text class="dg-cell" x="390" y="779">entreprise</text>
+        <text class="dg-cell" x="554" y="764">Présélection,</text>
+        <text class="dg-cell" x="554" y="779">messagerie</text>
+        <text class="dg-cell" x="718" y="764">Rendu PDF,</text>
+        <text class="dg-cell" x="718" y="779">notifications</text>
+        <text class="dg-cell" x="882" y="764">shortlists,</text>
+        <text class="dg-cell" x="882" y="779">notes privées</text>
+        <text class="dg-cell" x="1046" y="764">E-mail</text>
+        <rect class="cell-async" x="20" y="842" width="15" height="15" rx="3"/>
+        <text class="dg-cell" x="43" y="854">traitement asynchrone — l'utilisateur n'attend pas</text>
+        <rect class="cell-ext" x="370" y="842" width="15" height="15" rx="3"/>
+        <text class="dg-cell" x="393" y="854">appel externe facturé — c'est ici que part l'argent</text>
+      </svg>
+    </div>
+    <figcaption>Trois lectures utiles. <strong>La colonne « asynchrone » est celle où l'utilisateur n'attend pas</strong> — c'est la raison d'être de la file, et la ligne de partage entre ce qui doit répondre en moins d'une seconde et ce qui peut prendre trois minutes. <strong>La colonne « appels externes » est celle où part l'argent</strong>, et donc celle où un changement de fournisseur doit rester possible sans réécriture. Enfin, <strong>les étapes 4 et 8 n'ont ni entrée web ni module d'API</strong> : aucun utilisateur ne les déclenche directement et aucune page ne les affiche. Ce sont pourtant elles qui constituent le produit — tout le reste, un site d'annonces sait le faire.</figcaption>
   </figure>
 </section>
 
