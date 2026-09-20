@@ -1,0 +1,500 @@
+<title>Architecture TalVo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#F3F4F1; --surface:#FFFFFF; --surface-2:#EDEFEA;
+    --ink:#15181A; --muted:#5B6265; --line:#D4D8D1;
+    --accent:#1C6E62; --accent-soft:#E0EDEA;
+    --flag:#AE4620; --flag-soft:#F6E7E0;
+    --display:'Archivo',system-ui,sans-serif;
+    --body:'IBM Plex Sans',system-ui,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#111316; --surface:#191C20; --surface-2:#1F2328;
+      --ink:#E7EAE6; --muted:#98A0A3; --line:#2B3036;
+      --accent:#54B5A5; --accent-soft:#15312C;
+      --flag:#DE8459; --flag-soft:#33201A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#111316; --surface:#191C20; --surface-2:#1F2328;
+    --ink:#E7EAE6; --muted:#98A0A3; --line:#2B3036;
+    --accent:#54B5A5; --accent-soft:#15312C;
+    --flag:#DE8459; --flag-soft:#33201A;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.62;margin:0}
+  .wrap{max-width:1240px;margin:0 auto;padding-inline:20px;padding-block:0 72px}
+  .prose{max-width:760px}
+  h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+  h1{font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:-.022em;line-height:1.08}
+  h2{font-size:clamp(20px,3vw,26px);font-weight:600;letter-spacing:-.014em;line-height:1.2}
+  h3{font-size:16px;font-weight:600;letter-spacing:-.005em}
+  p{margin:0}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0}
+  header.top{border-bottom:1px solid var(--line);padding-block:56px 34px;display:flex;flex-direction:column;gap:16px}
+  .lede{font-size:17.5px;color:var(--muted);max-width:660px}
+  .banner{display:flex;gap:12px;align-items:flex-start;background:var(--flag-soft);border-left:3px solid var(--flag);
+          padding:14px 16px;border-radius:0 6px 6px 0;max-width:760px}
+  .banner .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--flag);white-space:nowrap;padding-top:2px}
+  .banner p{font-size:14.5px}
+  section{padding-block:44px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:20px}
+  section:last-of-type{border-bottom:0}
+  .shead{display:flex;flex-direction:column;gap:7px}
+  figure{margin:0;display:flex;flex-direction:column;gap:12px}
+  .scroller{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+  .diagram{display:block;color:var(--ink);height:auto}
+  figcaption{font-size:13.5px;color:var(--muted);max-width:760px}
+  .dg-box{fill:var(--surface-2);stroke:currentColor;stroke-width:1.1}
+  .dg-sys{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.2}
+  .dg-chip{fill:var(--surface);stroke:var(--line);stroke-width:1}
+  .dg-band{fill:var(--surface-2);stroke:none}
+  .dg-flag{fill:var(--flag-soft);stroke:var(--flag);stroke-width:1.2}
+  .dg-h{font-family:var(--display);font-weight:600;font-size:13.5px;fill:currentColor}
+  .dg-t{font-family:var(--body);font-weight:400;font-size:12px;fill:currentColor}
+  .dg-c{font-family:var(--body);font-weight:500;font-size:11.5px;fill:currentColor}
+  .dg-s{font-family:var(--mono);font-weight:400;font-size:10.5px;fill:var(--muted)}
+  .dg-a{font-family:var(--mono);font-weight:500;font-size:10px;fill:var(--muted)}
+  .dg-l{stroke:currentColor;stroke-width:1.2;fill:none}
+  .dg-dash{stroke-dasharray:5 4}
+  .dg-accent{stroke:var(--accent)}
+  table{border-collapse:collapse;width:100%;font-size:14px}
+  .tscroll{overflow-x:auto}
+  th,td{text-align:left;vertical-align:top;padding:11px 14px;border-bottom:1px solid var(--line)}
+  th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500;white-space:nowrap}
+  td:first-child{font-weight:600;white-space:nowrap}
+  .lean{font-family:var(--mono);font-size:11px;color:var(--accent)}
+  ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:7px}
+  li::marker{color:var(--accent)}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:14px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:16px;display:flex;flex-direction:column;gap:7px}
+  .card .n{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--flag);text-transform:uppercase}
+  .card p{font-size:13.5px;color:var(--muted)}
+  .rule{font-family:var(--mono);font-size:13px;background:var(--surface);border:1px solid var(--line);
+        border-left:3px solid var(--accent);border-radius:0 7px 7px 0;padding:13px 16px;max-width:760px}
+  footer{padding-block:34px;font-size:13px;color:var(--muted);max-width:760px}
+  @media (max-width:640px){ section{padding-block:34px} .scroller{padding:12px} }
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <p class="eyebrow">Proposition d'architecture · Septembre 2026</p>
+  <h1>Architecture TalVo</h1>
+  <p class="lede">Cartographie de bout en bout de la plateforme : du dépôt d'un CV jusqu'à la shortlist transmise au recruteur. Support de discussion entre co-CTO.</p>
+  <div class="banner">
+    <span class="k">Statut</span>
+    <p><strong>Rien n'est figé.</strong> Aucun fournisseur n'est retenu, aucun framework n'est arrêté. Ces schémas décrivent des frontières et des flux, pas un choix de technologie. Les zones de décision encore ouvertes sont listées en fin de page.</p>
+  </div>
+</header>
+
+<section>
+  <div class="shead">
+    <p class="eyebrow">Figure 1</p>
+    <h2>Vue d'ensemble</h2>
+    <p class="prose">Trois frontières seulement — web, API modulaire, workers — plus PostgreSQL et le stockage objet. Les modules métier sont isolés dans le code, pas déployés séparément : on paie la discipline d'architecture, pas la complexité opérationnelle.</p>
+  </div>
+  <figure>
+    <div class="scroller">
+      <svg class="diagram" viewBox="0 0 1160 540" style="min-width:1040px;width:100%" role="img" aria-label="Vue d'ensemble : les acteurs passent par la couche web, qui appelle une API modulaire ; celle-ci publie des travaux dans une file consommée par des workers, qui écrivent dans PostgreSQL et le stockage objet et appellent les fournisseurs externes abstraits.">
+        <defs>
+          <marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <polygon points="0,1 10,5 0,9" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <rect class="dg-box" x="24" y="70" width="150" height="54" rx="6"/>
+        <text class="dg-h" x="99" y="93" text-anchor="middle">Candidat</text>
+        <text class="dg-s" x="99" y="110" text-anchor="middle">mobile · réseau 3G</text>
+        <rect class="dg-box" x="24" y="140" width="150" height="54" rx="6"/>
+        <text class="dg-h" x="99" y="163" text-anchor="middle">Entreprise</text>
+        <text class="dg-s" x="99" y="180" text-anchor="middle">&amp; cabinet</text>
+        <rect class="dg-box" x="24" y="210" width="150" height="54" rx="6"/>
+        <text class="dg-h" x="99" y="233" text-anchor="middle">Admin TalVo</text>
+        <text class="dg-s" x="99" y="250" text-anchor="middle">back-office</text>
+
+        <rect class="dg-sys" x="234" y="70" width="180" height="194" rx="7"/>
+        <text class="dg-h" x="324" y="95" text-anchor="middle">Web</text>
+        <rect class="dg-chip" x="246" y="110" width="156" height="66" rx="5"/>
+        <text class="dg-c" x="324" y="132" text-anchor="middle">Pages publiques</text>
+        <text class="dg-c" x="324" y="148" text-anchor="middle">rendues serveur</text>
+        <text class="dg-s" x="324" y="165" text-anchor="middle">référencement</text>
+        <rect class="dg-chip" x="246" y="186" width="156" height="66" rx="5"/>
+        <text class="dg-c" x="324" y="208" text-anchor="middle">Application</text>
+        <text class="dg-s" x="324" y="225" text-anchor="middle">candidat · recruteur</text>
+        <text class="dg-s" x="324" y="240" text-anchor="middle">· admin</text>
+
+        <rect class="dg-sys" x="474" y="70" width="210" height="194" rx="7"/>
+        <text class="dg-h" x="579" y="95" text-anchor="middle">API modulaire</text>
+        <rect class="dg-chip" x="486" y="108" width="186" height="22" rx="4"/>
+        <text class="dg-c" x="579" y="123" text-anchor="middle">Comptes &amp; accès</text>
+        <rect class="dg-chip" x="486" y="134" width="186" height="22" rx="4"/>
+        <text class="dg-c" x="579" y="149" text-anchor="middle">Profils &amp; CV</text>
+        <rect class="dg-chip" x="486" y="160" width="186" height="22" rx="4"/>
+        <text class="dg-c" x="579" y="175" text-anchor="middle">Offres &amp; candidatures</text>
+        <rect class="dg-chip" x="486" y="186" width="186" height="22" rx="4"/>
+        <text class="dg-c" x="579" y="201" text-anchor="middle">Matching &amp; sourcing</text>
+        <rect class="dg-chip" x="486" y="212" width="186" height="22" rx="4"/>
+        <text class="dg-c" x="579" y="227" text-anchor="middle">Tests</text>
+        <rect class="dg-chip" x="486" y="238" width="186" height="22" rx="4"/>
+        <text class="dg-c" x="579" y="253" text-anchor="middle">Facturation</text>
+
+        <rect class="dg-box" x="744" y="100" width="150" height="134" rx="7"/>
+        <text class="dg-h" x="819" y="140" text-anchor="middle">File de</text>
+        <text class="dg-h" x="819" y="157" text-anchor="middle">travaux</text>
+        <text class="dg-s" x="819" y="180" text-anchor="middle">travaux longs,</text>
+        <text class="dg-s" x="819" y="195" text-anchor="middle">par rafales</text>
+
+        <rect class="dg-sys" x="954" y="70" width="180" height="194" rx="7"/>
+        <text class="dg-h" x="1044" y="95" text-anchor="middle">Workers</text>
+        <rect class="dg-chip" x="966" y="110" width="156" height="28" rx="4"/>
+        <text class="dg-c" x="1044" y="128" text-anchor="middle">Extraction de CV</text>
+        <rect class="dg-chip" x="966" y="144" width="156" height="28" rx="4"/>
+        <text class="dg-c" x="1044" y="162" text-anchor="middle">Moteur de matching</text>
+        <rect class="dg-chip" x="966" y="178" width="156" height="28" rx="4"/>
+        <text class="dg-c" x="1044" y="196" text-anchor="middle">Rendu PDF</text>
+        <rect class="dg-chip" x="966" y="212" width="156" height="28" rx="4"/>
+        <text class="dg-c" x="1044" y="230" text-anchor="middle">Notifications</text>
+
+        <rect class="dg-box" x="474" y="320" width="280" height="80" rx="7"/>
+        <text class="dg-h" x="614" y="345" text-anchor="middle">Données</text>
+        <rect class="dg-chip" x="486" y="356" width="128" height="32" rx="4"/>
+        <text class="dg-c" x="550" y="376" text-anchor="middle">PostgreSQL</text>
+        <rect class="dg-chip" x="622" y="356" width="120" height="32" rx="4"/>
+        <text class="dg-c" x="682" y="376" text-anchor="middle">Stockage objet</text>
+
+        <rect class="dg-box" x="954" y="320" width="180" height="126" rx="7"/>
+        <text class="dg-h" x="1044" y="343" text-anchor="middle">Fournisseurs</text>
+        <text class="dg-s" x="1044" y="358" text-anchor="middle">interfaces abstraites</text>
+        <rect class="dg-chip" x="966" y="366" width="156" height="18" rx="3"/>
+        <text class="dg-s" x="1044" y="379" text-anchor="middle">OCR / extraction</text>
+        <rect class="dg-chip" x="966" y="387" width="156" height="18" rx="3"/>
+        <text class="dg-s" x="1044" y="400" text-anchor="middle">E-mail</text>
+        <rect class="dg-chip" x="966" y="408" width="156" height="18" rx="3"/>
+        <text class="dg-s" x="1044" y="421" text-anchor="middle">SMS / WhatsApp</text>
+        <rect class="dg-chip" x="966" y="429" width="156" height="18" rx="3"/>
+        <text class="dg-s" x="1044" y="442" text-anchor="middle">Mobile money</text>
+
+        <line class="dg-l" x1="174" y1="97" x2="228" y2="97" marker-end="url(#ar1)"/>
+        <line class="dg-l" x1="174" y1="167" x2="228" y2="167" marker-end="url(#ar1)"/>
+        <line class="dg-l" x1="174" y1="237" x2="228" y2="237" marker-end="url(#ar1)"/>
+        <text class="dg-a" x="201" y="62" text-anchor="middle">HTTPS</text>
+
+        <line class="dg-l" x1="414" y1="167" x2="468" y2="167" marker-end="url(#ar1)"/>
+        <text class="dg-a" x="441" y="62" text-anchor="middle">appels API</text>
+
+        <line class="dg-l" x1="684" y1="167" x2="738" y2="167" marker-end="url(#ar1)"/>
+        <text class="dg-a" x="711" y="62" text-anchor="middle">publie</text>
+
+        <line class="dg-l" x1="894" y1="167" x2="948" y2="167" marker-end="url(#ar1)"/>
+        <text class="dg-a" x="921" y="62" text-anchor="middle">consomme</text>
+
+        <line class="dg-l" x1="579" y1="264" x2="579" y2="314" marker-end="url(#ar1)"/>
+        <text class="dg-a" x="589" y="296">lit / écrit</text>
+
+        <polyline class="dg-l" points="1000,264 1000,296 680,296 680,314" marker-end="url(#ar1)"/>
+        <text class="dg-a" x="840" y="288" text-anchor="middle">écrit les résultats</text>
+
+        <line class="dg-l" x1="1064" y1="264" x2="1064" y2="314" marker-end="url(#ar1)"/>
+        <text class="dg-a" x="1054" y="310" text-anchor="end">appels sortants</text>
+
+        <rect class="dg-box dg-dash" x="24" y="474" width="1110" height="42" rx="6" fill="none"/>
+        <text class="dg-s" x="579" y="500" text-anchor="middle">Observabilité — journaux, traces, alertes · dans une chaîne asynchrone, un travail bloqué ne produit aucune erreur visible : il ne se passe rien</text>
+      </svg>
+    </div>
+    <figcaption>Le chemin d'une requête va de gauche à droite. Tout ce qui est long ou irrégulier — extraction de CV, recalcul de matching, génération de PDF, envois — quitte ce chemin et passe par la file. Les boîtes teintées sont le code TalVo ; les fournisseurs externes sont derrière des interfaces internes, pour pouvoir être comparés, remplacés ou rapatriés sans réécriture.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="shead">
+    <p class="eyebrow">Figure 2</p>
+    <h2>La chaîne documentaire</h2>
+    <p class="prose">C'est le cœur du produit et son principal risque. Si cette chaîne produit du bruit, le moteur classe du bruit et la shortlist n'a aucune valeur commerciale. La règle qui structure tout le pipeline figure à l'étape 4.</p>
+  </div>
+  <div class="rule">Le modèle <strong>désigne</strong>, il ne rédige pas. Le code normalise.</div>
+  <figure>
+    <div class="scroller">
+      <svg class="diagram" viewBox="0 0 980 790" style="min-width:860px;width:100%" role="img" aria-label="Chaîne de traitement d'un CV : dépôt, triage, branche PDF natif ou OCR, extraction structurée par désignation d'extraits source, vérification d'ancrage avec rejet des champs introuvables, normalisation déterministe, validation par le candidat produisant des données d'entraînement, puis profil exploitable.">
+        <defs>
+          <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <polygon points="0,1 10,5 0,9" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <rect class="dg-box" x="200" y="24" width="420" height="56" rx="6"/>
+        <text class="dg-h" x="410" y="47" text-anchor="middle">1 · Dépôt</text>
+        <text class="dg-s" x="410" y="65" text-anchor="middle">PDF natif · PDF scanné · DOCX · photo prise au téléphone</text>
+        <line class="dg-l" x1="410" y1="80" x2="410" y2="104" marker-end="url(#ar2)"/>
+
+        <rect class="dg-box" x="200" y="110" width="420" height="56" rx="6"/>
+        <text class="dg-h" x="410" y="133" text-anchor="middle">2 · Triage</text>
+        <text class="dg-s" x="410" y="151" text-anchor="middle">type réel du fichier · antivirus · y a-t-il une couche texte ?</text>
+
+        <polyline class="dg-l" points="300,166 300,194 180,194 180,214" marker-end="url(#ar2)"/>
+        <polyline class="dg-l" points="520,166 520,194 640,194 640,214" marker-end="url(#ar2)"/>
+        <text class="dg-a" x="234" y="188" text-anchor="middle">couche texte</text>
+        <text class="dg-a" x="586" y="188" text-anchor="middle">scan / photo</text>
+
+        <rect class="dg-box" x="40" y="220" width="280" height="52" rx="6"/>
+        <text class="dg-c" x="180" y="241" text-anchor="middle">3a · Extraction du texte</text>
+        <text class="dg-s" x="180" y="258" text-anchor="middle">+ analyse de mise en page</text>
+
+        <rect class="dg-box" x="500" y="220" width="280" height="52" rx="6"/>
+        <text class="dg-c" x="640" y="241" text-anchor="middle">3b · OCR</text>
+        <text class="dg-s" x="640" y="258" text-anchor="middle">+ analyse de mise en page</text>
+
+        <polyline class="dg-l" points="180,272 180,296 410,296"/>
+        <polyline class="dg-l" points="640,272 640,296 410,296"/>
+        <line class="dg-l" x1="410" y1="296" x2="410" y2="314" marker-end="url(#ar2)"/>
+
+        <rect class="dg-sys" x="200" y="320" width="420" height="68" rx="6"/>
+        <text class="dg-h" x="410" y="344" text-anchor="middle">4 · Extraction structurée</text>
+        <text class="dg-t" x="410" y="363" text-anchor="middle">le modèle désigne un extrait source, il ne rédige pas</text>
+        <text class="dg-s" x="410" y="379" text-anchor="middle">sortie contrainte par un schéma</text>
+        <line class="dg-l" x1="410" y1="388" x2="410" y2="414" marker-end="url(#ar2)"/>
+        <text class="dg-a" x="420" y="406">valeur + extrait source</text>
+
+        <rect class="dg-sys" x="200" y="420" width="420" height="56" rx="6"/>
+        <text class="dg-h" x="410" y="443" text-anchor="middle">5 · Vérification d'ancrage</text>
+        <text class="dg-s" x="410" y="461" text-anchor="middle">l'extrait figure-t-il réellement dans le document ?</text>
+
+        <line class="dg-l" x1="620" y1="448" x2="694" y2="448" marker-end="url(#ar2)"/>
+        <text class="dg-a" x="657" y="440" text-anchor="middle">non</text>
+        <rect class="dg-flag" x="700" y="414" width="250" height="68" rx="6"/>
+        <text class="dg-c" x="825" y="437" text-anchor="middle">Rejeté ou à valider</text>
+        <text class="dg-s" x="825" y="454" text-anchor="middle">jamais accepté</text>
+        <text class="dg-s" x="825" y="469" text-anchor="middle">en silence</text>
+
+        <line class="dg-l" x1="410" y1="476" x2="410" y2="510" marker-end="url(#ar2)"/>
+        <text class="dg-a" x="420" y="500">oui</text>
+
+        <rect class="dg-box" x="200" y="516" width="420" height="56" rx="6"/>
+        <text class="dg-h" x="410" y="539" text-anchor="middle">6 · Normalisation déterministe</text>
+        <text class="dg-s" x="410" y="557" text-anchor="middle">référentiel compétences · fonctions · diplômes · secteurs</text>
+        <line class="dg-l" x1="410" y1="572" x2="410" y2="606" marker-end="url(#ar2)"/>
+
+        <rect class="dg-box" x="200" y="612" width="420" height="56" rx="6"/>
+        <text class="dg-h" x="410" y="635" text-anchor="middle">7 · Validation par le candidat</text>
+        <text class="dg-s" x="410" y="653" text-anchor="middle">il corrige ce que la machine a mal lu</text>
+
+        <line class="dg-l" x1="620" y1="640" x2="694" y2="640" marker-end="url(#ar2)"/>
+        <rect class="dg-flag" x="700" y="606" width="250" height="68" rx="6"/>
+        <text class="dg-c" x="825" y="629" text-anchor="middle">Donnée d'entraînement</text>
+        <text class="dg-s" x="825" y="646" text-anchor="middle">chaque correction alimente</text>
+        <text class="dg-s" x="825" y="661" text-anchor="middle">le futur fine-tuning</text>
+
+        <line class="dg-l" x1="410" y1="668" x2="410" y2="702" marker-end="url(#ar2)"/>
+        <rect class="dg-sys" x="200" y="708" width="420" height="56" rx="6"/>
+        <text class="dg-h" x="410" y="731" text-anchor="middle">8 · Profil exploitable</text>
+        <text class="dg-s" x="410" y="749" text-anchor="middle">entre dans le moteur de matching</text>
+      </svg>
+    </div>
+    <figcaption>Les étapes 4, 5 et 6 forment le garde-fou anti-hallucination, et il est structurel, pas déclaratif : un employeur, une date ou un diplôme doivent exister littéralement dans le document. Ce qui ne s'y trouve pas ne rentre jamais dans la base. La validation de l'étape 7 est exigée par le cahier des charges — elle produit en plus, sans effort, le jeu de données annoté qui rendra un fine-tuning possible plus tard.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="shead">
+    <p class="eyebrow">Figure 3</p>
+    <h2>Matching : IA au rappel, règles au classement</h2>
+    <p class="prose">Le cahier des charges exige un moteur explicable ; l'IA sémantique est difficile à justifier. Les deux exigences ne s'opposent que si on les place au même endroit.</p>
+  </div>
+  <figure>
+    <div class="scroller">
+      <svg class="diagram" viewBox="0 0 1320 340" style="min-width:1100px;width:100%" role="img" aria-label="Le vivier passe par un rappel sémantique par IA qui élargit l'ensemble des candidats, puis par un moteur de règles pondérées qui produit le score affiché ; le référentiel alimente les deux étapes, et une correspondance sémantique validée par un humain y est ajoutée comme alias.">
+        <defs>
+          <marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <polygon points="0,1 10,5 0,9" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <rect class="dg-box" x="24" y="56" width="140" height="88" rx="6"/>
+        <text class="dg-h" x="94" y="94" text-anchor="middle">Vivier</text>
+        <text class="dg-s" x="94" y="112" text-anchor="middle">profils indexés</text>
+
+        <rect class="dg-sys" x="274" y="56" width="180" height="88" rx="6"/>
+        <text class="dg-h" x="364" y="86" text-anchor="middle">Rappel</text>
+        <text class="dg-t" x="364" y="105" text-anchor="middle">similarité sémantique</text>
+        <text class="dg-s" x="364" y="122" text-anchor="middle">IA · rien à justifier ici</text>
+
+        <rect class="dg-box" x="564" y="56" width="150" height="88" rx="6"/>
+        <text class="dg-h" x="639" y="88" text-anchor="middle">Candidats</text>
+        <text class="dg-h" x="639" y="106" text-anchor="middle">plausibles</text>
+        <text class="dg-s" x="639" y="124" text-anchor="middle">ensemble élargi</text>
+
+        <rect class="dg-sys" x="824" y="56" width="180" height="88" rx="6"/>
+        <text class="dg-h" x="914" y="86" text-anchor="middle">Classement</text>
+        <text class="dg-t" x="914" y="105" text-anchor="middle">règles pondérées</text>
+        <text class="dg-s" x="914" y="122" text-anchor="middle">35 / 30 / 15 / 10 / 10</text>
+
+        <rect class="dg-box" x="1114" y="56" width="160" height="88" rx="6"/>
+        <text class="dg-h" x="1194" y="88" text-anchor="middle">Fiche</text>
+        <text class="dg-h" x="1194" y="106" text-anchor="middle">recruteur</text>
+        <text class="dg-s" x="1194" y="124" text-anchor="middle">score + son pourquoi</text>
+
+        <line class="dg-l" x1="164" y1="100" x2="268" y2="100" marker-end="url(#ar3)"/>
+        <text class="dg-a" x="216" y="90" text-anchor="middle">tous les profils</text>
+        <line class="dg-l" x1="454" y1="100" x2="558" y2="100" marker-end="url(#ar3)"/>
+        <text class="dg-a" x="506" y="90" text-anchor="middle">élargit le rappel</text>
+        <line class="dg-l" x1="714" y1="100" x2="818" y2="100" marker-end="url(#ar3)"/>
+        <text class="dg-a" x="766" y="90" text-anchor="middle">à classer</text>
+        <line class="dg-l" x1="1004" y1="100" x2="1108" y2="100" marker-end="url(#ar3)"/>
+        <text class="dg-a" x="1056" y="90" text-anchor="middle">score + pourquoi</text>
+
+        <rect class="dg-box" x="274" y="250" width="730" height="64" rx="6"/>
+        <text class="dg-h" x="639" y="277" text-anchor="middle">Référentiel — compétences · fonctions · diplômes · alias</text>
+        <text class="dg-s" x="639" y="297" text-anchor="middle">normalisé, curé, propriétaire · c'est lui qui rend le score reproductible</text>
+
+        <line class="dg-l" x1="324" y1="250" x2="324" y2="150" marker-end="url(#ar3)"/>
+        <text class="dg-a" x="314" y="200" text-anchor="end">alimente</text>
+        <line class="dg-l dg-dash" x1="424" y1="144" x2="424" y2="244" marker-end="url(#ar3)"/>
+        <text class="dg-a" x="434" y="196">correspondance</text>
+        <text class="dg-a" x="434" y="210">validée → alias</text>
+        <line class="dg-l" x1="924" y1="250" x2="924" y2="150" marker-end="url(#ar3)"/>
+        <text class="dg-a" x="934" y="200">alimente</text>
+      </svg>
+    </div>
+    <figcaption>L'IA sert à <em>trouver</em> des candidats qu'un mot-clé raterait — « états financiers » contre « reporting comptable ». Elle ne sert jamais à <em>ordonner</em> : le score affiché au recruteur vient des règles pondérées et porte son détail. Quand la similarité rapproche deux termes, la correspondance est validée par un humain et devient un alias du référentiel : l'IA nourrit le système explicable au lieu de le contourner.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="shead">
+    <p class="eyebrow">Figure 4</p>
+    <h2>Parcours de bout en bout</h2>
+    <p class="prose">Qui fait quoi, dans l'ordre, de la publication d'une offre à la décision du recruteur.</p>
+  </div>
+  <figure>
+    <div class="scroller">
+      <svg class="diagram" viewBox="0 0 1220 430" style="min-width:1080px;width:100%" role="img" aria-label="Parcours en trois couloirs. L'entreprise publie une offre et le candidat dépose son CV ; TalVo indexe et normalise ; le candidat consulte et postule ; TalVo score, classe et source ; le candidat passe le test ; TalVo produit la shortlist et la fiche explicable ; l'entreprise décide.">
+        <defs>
+          <marker id="ar4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <polygon points="0,1 10,5 0,9" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <rect class="dg-band" x="20" y="46" width="1180" height="100" rx="8"/>
+        <rect class="dg-band" x="20" y="166" width="1180" height="120" rx="8"/>
+        <rect class="dg-band" x="20" y="306" width="1180" height="100" rx="8"/>
+        <text class="dg-s" x="34" y="100">ENTREPRISE</text>
+        <text class="dg-s" x="34" y="230">TALVO</text>
+        <text class="dg-s" x="34" y="360">CANDIDAT</text>
+
+        <rect class="dg-box" x="140" y="64" width="160" height="64" rx="6"/>
+        <text class="dg-c" x="220" y="88" text-anchor="middle">1 · Publie l'offre</text>
+        <text class="dg-s" x="220" y="107" text-anchor="middle">coche « tests requis »</text>
+
+        <rect class="dg-box" x="140" y="324" width="160" height="64" rx="6"/>
+        <text class="dg-c" x="220" y="348" text-anchor="middle">1′ · Dépose son CV</text>
+        <text class="dg-s" x="220" y="367" text-anchor="middle">PDF · DOCX · photo</text>
+
+        <rect class="dg-sys" x="318" y="194" width="160" height="64" rx="6"/>
+        <text class="dg-c" x="398" y="218" text-anchor="middle">2 · Indexe et</text>
+        <text class="dg-c" x="398" y="234" text-anchor="middle">normalise</text>
+        <text class="dg-s" x="398" y="250" text-anchor="middle">offre + profil</text>
+
+        <rect class="dg-box" x="496" y="324" width="160" height="64" rx="6"/>
+        <text class="dg-c" x="576" y="348" text-anchor="middle">3 · Consulte</text>
+        <text class="dg-c" x="576" y="364" text-anchor="middle">et postule</text>
+        <text class="dg-s" x="576" y="380" text-anchor="middle">secteur seul si gratuit</text>
+
+        <rect class="dg-sys" x="674" y="194" width="160" height="64" rx="6"/>
+        <text class="dg-c" x="754" y="218" text-anchor="middle">4 · Score et classe</text>
+        <text class="dg-s" x="754" y="236" text-anchor="middle">+ identifie les profils</text>
+        <text class="dg-s" x="754" y="250" text-anchor="middle">sourcés non candidats</text>
+
+        <rect class="dg-box" x="852" y="324" width="160" height="64" rx="6"/>
+        <text class="dg-c" x="932" y="348" text-anchor="middle">5 · Passe le test</text>
+        <text class="dg-s" x="932" y="366" text-anchor="middle">temps serveur ·</text>
+        <text class="dg-s" x="932" y="380" text-anchor="middle">reprise après coupure</text>
+
+        <rect class="dg-sys" x="1030" y="194" width="160" height="64" rx="6"/>
+        <text class="dg-c" x="1110" y="218" text-anchor="middle">6 · Shortlist</text>
+        <text class="dg-s" x="1110" y="236" text-anchor="middle">+ fiche candidat</text>
+        <text class="dg-s" x="1110" y="250" text-anchor="middle">avec le pourquoi</text>
+
+        <rect class="dg-box" x="1030" y="64" width="160" height="64" rx="6"/>
+        <text class="dg-c" x="1110" y="88" text-anchor="middle">7 · Décide</text>
+        <text class="dg-s" x="1110" y="107" text-anchor="middle">contacter · entretien · écarter</text>
+
+        <polyline class="dg-l" points="220,128 220,160 358,160 358,188" marker-end="url(#ar4)"/>
+        <text class="dg-a" x="230" y="154">offre publiée</text>
+        <polyline class="dg-l" points="220,324 220,292 438,292 438,264" marker-end="url(#ar4)"/>
+        <text class="dg-a" x="230" y="303">CV déposé</text>
+
+        <polyline class="dg-l" points="478,226 487,226 487,356 490,356" marker-end="url(#ar4)"/>
+        <text class="dg-a" x="493" y="291">offre visible</text>
+        <polyline class="dg-l" points="656,356 665,356 665,226 668,226" marker-end="url(#ar4)"/>
+        <text class="dg-a" x="671" y="291">candidature</text>
+        <polyline class="dg-l" points="834,226 843,226 843,356 846,356" marker-end="url(#ar4)"/>
+        <text class="dg-a" x="849" y="291">invitation au test</text>
+        <polyline class="dg-l" points="1012,356 1021,356 1021,226 1024,226" marker-end="url(#ar4)"/>
+        <text class="dg-a" x="1027" y="291">score du test</text>
+        <line class="dg-l" x1="1110" y1="194" x2="1110" y2="134" marker-end="url(#ar4)"/>
+        <text class="dg-a" x="1118" y="166">shortlist</text>
+      </svg>
+    </div>
+    <figcaption>Les étapes teintées sont celles où TalVo crée sa valeur — et ce sont aussi celles qui n'existent chez aucun site d'annonces. L'étape 4 alimente deux listes distinctes : les candidatures reçues et les talents sourcés qui n'ont pas postulé, que le cahier des charges impose de présenter séparément.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="shead">
+    <p class="eyebrow">Décisions</p>
+    <h2>Ce qui reste ouvert</h2>
+    <p class="prose">Ces points ne sont pas tranchés. La colonne « orientation » indique une préférence argumentée, pas un choix arrêté.</p>
+  </div>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>Sujet</th><th>Options</th><th>Orientation</th></tr></thead>
+    <tbody>
+      <tr><td>Découpage web</td><td>Application unique rendue serveur · SPA + API séparée</td><td><span class="lean">Peu urgent — n'engage ni les données, ni le matching, ni la chaîne documentaire</span></td></tr>
+      <tr><td>Hébergement</td><td>Conteneurs orchestrés en région choisie · plateforme managée</td><td><span class="lean">Du calcul maîtrisé : le serverless pur ne convient pas aux traitements longs</span></td></tr>
+      <tr><td>OCR</td><td>Service commercial · modèle ouvert auto-hébergé · multimodal direct</td><td><span class="lean">À décider sur mesure, pas sur catalogue</span></td></tr>
+      <tr><td>Extraction</td><td>Parseur de CV du marché · LLM à sortie contrainte · modèle multimodal</td><td><span class="lean">Mêmes conditions — le français est le critère de premier rang</span></td></tr>
+      <tr><td>Poids ouverts ou API</td><td>API fermée · modèle ouvert (chinois ou européen)</td><td><span class="lean">API au départ, mais garder l'option ouverte pour le fine-tuning</span></td></tr>
+      <tr><td>Identifiant de compte</td><td>E-mail · téléphone + OTP · les deux</td><td><span class="lean">Le téléphone est l'identifiant réel du marché — impacte le modèle de données</span></td></tr>
+      <tr><td>Canal d'invitation aux tests</td><td>E-mail seul · e-mail + SMS · WhatsApp</td><td><span class="lean">L'e-mail seul est un point de rupture du tunnel</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <div class="shead">
+    <p class="eyebrow">Angles morts</p>
+    <h2>Absents du cahier des charges</h2>
+    <p class="prose">Sujets non couverts par le document de cadrage, par ordre de criticité pour la V1.</p>
+  </div>
+  <div class="cards">
+    <div class="card"><span class="n">01 · Identité</span><h3>Téléphone, pas e-mail</h3><p>Exiger un e-mail vérifié écartera une part des candidats — et ce sera invisible dans les statistiques, puisqu'on ne mesure pas ceux qui abandonnent.</p></div>
+    <div class="card"><span class="n">02 · Tests</span><h3>Chronomètre serveur et reprise réseau</h3><p>Un minuteur client est contournable. Et sans sauvegarde de chaque réponse, une coupure 3G détruit le test. C'est là qu'un produit conçu pour une connexion stable échoue.</p></div>
+    <div class="card"><span class="n">03 · Tests</span><h3>Anti-triche proportionné</h3><p>TalVo vend des talents évalués. Il ne s'agit pas de rendre la triche impossible, mais plus coûteuse que d'apprendre — et détectable après coup.</p></div>
+    <div class="card"><span class="n">04 · Tests</span><h3>Volume de la banque de questions</h3><p>Neuf tests, trente questions, un ratio de cinq pour un : environ 1 350 questions à rédiger et calibrer. Plusieurs semaines-personnes, jamais chiffrées.</p></div>
+    <div class="card"><span class="n">05 · Sécurité</span><h3>Fichiers déposés par des inconnus</h3><p>Antivirus, vérification du type réel, taille maximale, stockage hors du domaine applicatif, isolation du processus d'extraction.</p></div>
+    <div class="card"><span class="n">06 · Confiance</span><h3>Fausses offres et frais de dossier</h3><p>Risque connu du marché. Une seule arnaque réussie détruit la confiance des candidats. La validation des entreprises doit être un processus, pas une case à cocher.</p></div>
+    <div class="card"><span class="n">07 · Exploitation</span><h3>Sauvegardes réellement restaurées</h3><p>Absent de tous les documents. Une sauvegarde jamais restaurée n'est pas une sauvegarde. Perdre les CV, c'est perdre le vivier — donc l'actif.</p></div>
+    <div class="card"><span class="n">08 · Mesure</span><h3>Instrumentation des indicateurs</h3><p>Le cadrage définit quatorze indicateurs sans dire comment les mesurer. Une donnée non collectée en janvier est perdue pour l'analyse du pilote.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="shead">
+    <p class="eyebrow">Prochaine étape</p>
+    <h2>Une seule chose à lancer maintenant</h2>
+  </div>
+  <p class="prose">Constituer un <strong>corpus de 150 à 200 CV réels</strong> représentatifs de ce que la plateforme recevra — PDF natifs sur une et deux colonnes, scans, photos, DOCX, français et anglais, profils juniors et seniors, mines, banque, télécoms, ONG, administration — avec consentement explicite et anonymisation. En annoter une cinquantaine en vérité terrain, puis mesurer trois ou quatre chaînes candidates sur cinq axes : exactitude par champ, taux d'échec total, coût par CV, latence, effort de correction résiduel.</p>
+  <p class="prose">C'est le travail le plus ingrat du projet et le plus rentable. Sans lui, le choix entre modèle chinois ou américain, ouvert ou fermé, API ou auto-hébergé ne repose que sur des impressions. Et le corpus devient ensuite le harnais de non-régression permanent de TalVo : chaque changement de modèle se mesure dessus, pour toujours.</p>
+  <p class="prose">Il peut être constitué <strong>pendant</strong> la phase UX/UI d'octobre, sans décaler la V1 de janvier 2027.</p>
+</section>
+
+<footer>
+  Document de travail · phase de cadrage, septembre 2026. Les schémas décrivent des frontières et des flux proposés ; ils ne fixent aucun fournisseur ni aucun framework. Sources détaillées dans le dépôt : cadrage fonctionnel, modèle de données, moteur de matching, chaîne documentaire, stratégie de modèles, angles morts.
+</footer>
+
+</div>
