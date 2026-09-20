@@ -20,6 +20,8 @@ démontrant la valeur du tri automatique des CV et des tests en ligne.
 | [`docs/02-moteur-matching.md`](docs/02-moteur-matching.md) | Spécification du moteur de matching |
 | [`docs/03-decisions-techniques.md`](docs/03-decisions-techniques.md) | Architecture — **arbitrage suspendu** |
 | [`docs/04-ia-traitement-documentaire.md`](docs/04-ia-traitement-documentaire.md) | IA, chaîne IDP et architecture pour l'échelle |
+| [`docs/05-strategie-modeles-ia.md`](docs/05-strategie-modeles-ia.md) | Choix de modèles, coût et garde-fous anti-hallucination |
+| [`docs/06-analyse-zety.md`](docs/06-analyse-zety.md) | Analyse d'un produit de référence : ce qui est transposable |
 
 ## État
 
