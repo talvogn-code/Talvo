@@ -18,9 +18,14 @@ démontrant la valeur du tri automatique des CV et des tests en ligne.
 | [`docs/00-cadrage-mvp.md`](docs/00-cadrage-mvp.md) | Cahier des charges fonctionnel — **source de vérité** |
 | [`docs/01-modele-donnees.md`](docs/01-modele-donnees.md) | Modèle de données V1 |
 | [`docs/02-moteur-matching.md`](docs/02-moteur-matching.md) | Spécification du moteur de matching |
-| [`docs/03-decisions-techniques.md`](docs/03-decisions-techniques.md) | Architecture — **en attente d'arbitrage** |
+| [`docs/03-decisions-techniques.md`](docs/03-decisions-techniques.md) | Architecture — **arbitrage suspendu** |
+| [`docs/04-ia-traitement-documentaire.md`](docs/04-ia-traitement-documentaire.md) | IA, chaîne IDP et architecture pour l'échelle |
 
 ## État
 
-Phase **Cadrage** (septembre 2026). Aucun code applicatif à ce stade : la stack est en cours
-d'arbitrage, voir `docs/03-decisions-techniques.md`.
+Phase **Cadrage** (septembre 2026). Aucun code applicatif à ce stade.
+
+L'arbitrage technique est **volontairement suspendu** : la chaîne de traitement documentaire
+(lecture et compréhension des CV déposés en PDF/Word) est la contrainte dimensionnante du
+produit, et elle doit être mesurée sur des CV réels avant tout choix d'infrastructure.
+Voir `docs/04-ia-traitement-documentaire.md`.

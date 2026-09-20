@@ -1,7 +1,16 @@
 # TalVo — Décisions techniques
 
-Statut : **à valider**. Ce document confronte l'architecture recommandée par le cadrage aux
-contraintes réelles du projet (équipe, calendrier, hébergement) et propose un choix.
+> **Statut : arbitrage suspendu.** Ce document a été rédigé avant l'analyse de la chaîne de
+> traitement documentaire. Or c'est cette chaîne — et non les préférences de framework — qui
+> contraint l'infrastructure. Voir `04-ia-traitement-documentaire.md` : la charge IDP impose
+> des traitements longs, par rafales, avec workers élastiques, ce qui **disqualifie une approche
+> entièrement serverless orientée requête/réponse comme point de départ**, et relativise
+> l'opposition « une app » vs « deux apps » ci-dessous.
+>
+> Aucun choix de fournisseur n'est arrêté. La décision attend les mesures du §6 de ce document-là.
+
+Ce document confronte l'architecture recommandée par le cadrage aux contraintes de projet
+(équipe, calendrier, hébergement) et inventorie les options.
 
 ## 1. Ce que dit le cadrage (§14)
 
@@ -46,17 +55,23 @@ Exactement ce que décrit le cadrage.
 - **−** Dépendance à un fournisseur ; la logique d'autorisation part en policies SQL, à tester
   sérieusement ; l'auth JWT + refresh du cadrage est déléguée.
 
-## 3. Recommandation
+## 3. Lecture des options à la lumière de la charge documentaire
 
-**Option A ou C selon la réponse à une seule question : qui maintiendra le code après la V1 ?**
+Les trois options ci-dessus portent sur la **couche web**. Elles sont secondaires : quelle que
+soit celle retenue, il faut de toute façon une **file de travaux et un pool de workers** pour
+l'IDP, le matching et la génération de PDF (voir `04-ia-traitement-documentaire.md` §4). C'est
+cette partie-là qui détermine l'hébergement, le coût et la capacité à monter en charge.
 
-- Équipe backend Node en place, app mobile ferme à moyen terme → **Option B** (le cadrage a raison).
-- Petite équipe, objectif « pilote en janvier 2027 » → **Option A**, avec Postgres managé
-  (Supabase/Neon) et migrations SQL versionnées. On garde l'API sous `/api` structurée en modules
-  pour pouvoir l'extraire en NestJS plus tard sans réécrire la logique métier.
-- Besoin de livrer vite **et** de s'appuyer sur RLS pour les règles de confidentialité → **Option C**.
+Conséquences :
+- L'option C telle qu'écrite ci-dessus (plateforme managée tout-en-un) **ne couvre pas** le
+  besoin de calcul long et élastique. Elle n'est pas retenue comme point de départ.
+- Le débat « une app vs deux apps » reste ouvert et n'est pas urgent : il n'engage ni le modèle
+  de données, ni le moteur de matching, ni la chaîne documentaire, qui sont les trois pièces
+  réellement coûteuses à refaire.
+- Le critère décisif reste **qui maintiendra la plateforme après la V1**, et cette réponse n'a
+  pas encore été instruite.
 
-Dans les trois cas, ces points ne changent pas et peuvent être actés dès maintenant :
+Ces points, en revanche, ne dépendent d'aucune option et peuvent être actés dès maintenant :
 - **PostgreSQL**, migrations SQL versionnées dans le dépôt.
 - **TypeScript de bout en bout**, Tailwind pour l'UI.
 - Le **moteur de matching est un module pur** (entrées : profil + offre ; sortie : score + breakdown),
@@ -64,14 +79,16 @@ Dans les trois cas, ces points ne changent pas et peuvent être actés dès main
   du produit : elle doit survivre à un changement de stack.
 - **Recherche** : PostgreSQL Full Text (`tsvector` + GIN) et `pg_trgm`, pas de moteur externe.
 - **Stockage des CV** : objet S3-compatible, URLs signées, jamais d'accès public direct.
+- **Traitements asynchrones** : file de travaux + workers dès le socle. Toute la chaîne
+  documentaire, le recalcul de matching et la génération de PDF y passent.
+- **Fournisseurs d'IA abstraits** derrière des interfaces internes (`OcrProvider`,
+  `ExtractionProvider`), pour pouvoir comparer, basculer ou rapatrier sans réécriture.
+- **Modèle de données multi-pays** dès la V1, même avec un seul pays ouvert.
 
 ## 4. Sujets à trancher hors stack
 
-1. **Parsing de CV (PDF/DOCX)** — brique la plus risquée du périmètre P0. Les CV guinéens sont
-   souvent des PDF scannés ou des mises en page Word atypiques. Options : bibliothèque locale
-   (`pdf-parse`/`mammoth`) + correction manuelle obligatoire · service de parsing spécialisé ·
-   extraction assistée par LLM avec validation par le candidat. Le cadrage impose déjà la
-   correction manuelle (§8.1), ce qui est la bonne garantie quel que soit le choix.
+1. **Parsing de CV (PDF/DOCX)** — brique la plus risquée du périmètre P0, traitée en profondeur
+   dans `04-ia-traitement-documentaire.md`. À décider sur mesures, pas sur catalogue fournisseur.
 2. **Génération du PDF de CV** — rendu serveur (Puppeteer/Chromium) ou bibliothèque
    (`@react-pdf/renderer`). Contrainte : plusieurs modèles, accents français corrects.
 3. **Email transactionnel** — délivrabilité vers les boîtes guinéennes à vérifier ;
@@ -86,7 +103,9 @@ Dans les trois cas, ces points ne changent pas et peuvent être actés dès main
 ## 5. Calendrier — état au 20 septembre 2026
 
 Nous sommes dans la fenêtre **« Sept. 2026 — Cadrage »**. Livrables attendus de cette phase :
-périmètre MVP validé, règles métier, architecture, backlog. Les trois premiers sont couverts par
-`docs/00` à `docs/02` ; l'architecture est ce document, en attente d'arbitrage.
+périmètre MVP validé, règles métier, architecture, backlog. Les deux premiers sont couverts par
+`docs/00` à `docs/02`. L'architecture reste ouverte : elle dépend des mesures du corpus CV
+(`04-ia-traitement-documentaire.md` §6), qui peuvent être menées **pendant** la phase UX/UI
+d'octobre sans décaler le planning.
 
 Prochain jalon : **Oct. 2026 — UX/UI** (maquettes, design system, parcours candidat et entreprise).
