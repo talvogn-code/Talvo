@@ -1,0 +1,444 @@
+<title>Pipeline TalVo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#F3F4F1; --surface:#FFFFFF; --surface-2:#EDEFEA;
+    --ink:#15181A; --muted:#5B6265; --line:#D4D8D1;
+    --accent:#1C6E62; --accent-soft:#E0EDEA;
+    --flag:#AE4620; --flag-soft:#F6E7E0;
+    --display:'Archivo',system-ui,sans-serif;
+    --body:'IBM Plex Sans',system-ui,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#111316; --surface:#191C20; --surface-2:#1F2328;
+      --ink:#E7EAE6; --muted:#98A0A3; --line:#2B3036;
+      --accent:#54B5A5; --accent-soft:#15312C;
+      --flag:#DE8459; --flag-soft:#33201A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#111316; --surface:#191C20; --surface-2:#1F2328;
+    --ink:#E7EAE6; --muted:#98A0A3; --line:#2B3036;
+    --accent:#54B5A5; --accent-soft:#15312C;
+    --flag:#DE8459; --flag-soft:#33201A;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.62;margin:0}
+  .wrap{max-width:1240px;margin:0 auto;padding-inline:20px;padding-block:0 72px}
+  .prose{max-width:760px}
+  h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+  h1{font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:-.022em;line-height:1.08}
+  h2{font-size:clamp(20px,3vw,26px);font-weight:600;letter-spacing:-.014em;line-height:1.2}
+  h3{font-size:16px;font-weight:600;letter-spacing:-.005em}
+  p{margin:0}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0}
+  header.top{border-bottom:1px solid var(--line);padding-block:56px 34px;display:flex;flex-direction:column;gap:16px}
+  .lede{font-size:17.5px;color:var(--muted);max-width:680px}
+  section{padding-block:44px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:20px}
+  section:last-of-type{border-bottom:0}
+  .shead{display:flex;flex-direction:column;gap:7px}
+  figure{margin:0;display:flex;flex-direction:column;gap:12px}
+  .scroller{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+  .diagram{display:block;color:var(--ink);height:auto}
+  figcaption{font-size:13.5px;color:var(--muted);max-width:760px}
+  .dg-box{fill:var(--surface-2);stroke:currentColor;stroke-width:1.1}
+  .dg-sys{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.2}
+  .dg-chip{fill:var(--surface);stroke:var(--line);stroke-width:1}
+  .dg-band{fill:var(--surface-2);stroke:none}
+  .dg-flag{fill:var(--flag-soft);stroke:var(--flag);stroke-width:1.2}
+  .dg-h{font-family:var(--display);font-weight:600;font-size:13.5px;fill:currentColor}
+  .dg-c{font-family:var(--body);font-weight:500;font-size:11.5px;fill:currentColor}
+  .dg-t{font-family:var(--body);font-weight:400;font-size:11px;fill:currentColor}
+  .dg-s{font-family:var(--mono);font-weight:400;font-size:10.5px;fill:var(--muted)}
+  .dg-a{font-family:var(--mono);font-weight:500;font-size:10px;fill:var(--muted)}
+  .dg-l{stroke:currentColor;stroke-width:1.2;fill:none}
+  .dg-dash{stroke-dasharray:5 4}
+  table{border-collapse:collapse;width:100%;font-size:14px}
+  .tscroll{overflow-x:auto}
+  th,td{text-align:left;vertical-align:top;padding:11px 14px;border-bottom:1px solid var(--line)}
+  th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500;white-space:nowrap}
+  td:first-child{font-weight:600}
+  ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:7px}
+  li::marker{color:var(--accent)}
+  .rules{display:flex;flex-direction:column;gap:12px;counter-reset:r}
+  .rule{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--flag);
+        border-radius:0 8px 8px 0;padding:15px 18px;display:flex;gap:16px;align-items:flex-start}
+  .rule .num{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--flag);line-height:1;padding-top:2px}
+  .rule .txt{display:flex;flex-direction:column;gap:5px}
+  .rule p{font-size:13.5px;color:var(--muted)}
+  .stack{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:18px;
+         font-family:var(--mono);font-size:12.5px;line-height:2;max-width:860px}
+  .stack b{font-family:var(--body);font-weight:600;font-size:13px}
+  .slo{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+  .slo div{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:15px;display:flex;flex-direction:column;gap:4px}
+  .slo .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+  .slo .v{font-family:var(--display);font-weight:600;font-size:19px}
+  .slo .n{font-size:12.5px;color:var(--muted)}
+  footer{padding-block:34px;font-size:13px;color:var(--muted);max-width:760px}
+  @media (max-width:640px){ section{padding-block:34px} .scroller{padding:12px} }
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <p class="eyebrow">Proposition · Livraison continue</p>
+  <h1>Pipeline TalVo</h1>
+  <p class="lede">Du commit à la production. Ce qu'on outille maintenant, ce qu'on ajoute au pilote, et les deux garde-fous qu'il est brutal de rattraper après coup.</p>
+</header>
+
+<section>
+  <div class="shead">
+    <h2>Le principe</h2>
+  </div>
+  <p class="prose">À l'échelle d'un LinkedIn, le pipeline est un problème d'organisation : des centaines d'équipes qui déploient sans se marcher dessus. À l'échelle d'une équipe de trois ou quatre personnes, son rôle est beaucoup plus simple et beaucoup plus concret : <strong>rendre impossible de casser la production par accident, et garder la boucle de retour sous quinze minutes.</strong></p>
+  <p class="prose">Copier la chaîne d'un grand groupe serait une erreur de débutant coûteuse. Mais deux garde-fous doivent exister dès le premier commit, parce que les rattraper coûte dix fois plus cher que les poser : <strong>la discipline de migration sans coupure</strong>, et <strong>le contrôle qualité de la chaîne d'extraction</strong>. Les deux sont détaillés plus bas. Tout le reste s'ajoute progressivement.</p>
+</section>
+
+<section>
+  <div class="shead">
+    <p class="eyebrow">Figure 1</p>
+    <h2>Le chemin d'un commit</h2>
+    <p class="prose">Cinq étapes, chacune avec sa barrière. Une barrière rouge arrête la suite — c'est tout l'intérêt.</p>
+  </div>
+  <figure>
+    <div class="scroller">
+      <svg class="diagram" viewBox="0 0 1320 410" style="min-width:1120px;width:100%" role="img" aria-label="Le chemin d'un commit en cinq étapes : poste de développement, pull request avec intégration continue, environnement de prévisualisation, recette, production. Une boucle de retour part de la production vers l'observabilité, qui alimente le retour arrière et le poste de développement.">
+        <defs>
+          <marker id="p1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <polygon points="0,1 10,5 0,9" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <rect class="dg-box" x="24" y="44" width="220" height="52" rx="6"/>
+        <text class="dg-h" x="134" y="76" text-anchor="middle">1 · Poste de dev</text>
+        <rect class="dg-chip" x="24" y="112" width="220" height="180" rx="6"/>
+        <text class="dg-t" x="38" y="136">crochets avant commit</text>
+        <text class="dg-t" x="38" y="155">format et style</text>
+        <text class="dg-t" x="38" y="174">vérification des types</text>
+        <text class="dg-t" x="38" y="193">tests unitaires rapides</text>
+        <text class="dg-t" x="38" y="212">base locale en conteneur</text>
+        <text class="dg-s" x="38" y="238">branche courte</text>
+        <text class="dg-s" x="38" y="256">moins de 2 jours</text>
+
+        <rect class="dg-sys" x="284" y="44" width="220" height="52" rx="6"/>
+        <text class="dg-h" x="394" y="76" text-anchor="middle">2 · Pull request</text>
+        <rect class="dg-chip" x="284" y="112" width="220" height="180" rx="6"/>
+        <text class="dg-t" x="298" y="136">style et types</text>
+        <text class="dg-t" x="298" y="155">tests unitaires</text>
+        <text class="dg-t" x="298" y="174">tests d'intégration</text>
+        <text class="dg-s" x="298" y="191">Postgres jetable</text>
+        <text class="dg-t" x="298" y="212">construction de l'image</text>
+        <text class="dg-t" x="298" y="231">migration testée aller-retour</text>
+        <text class="dg-t" x="298" y="250">scan dépendances et secrets</text>
+        <text class="dg-c" x="298" y="272">évaluation sur le corpus</text>
+
+        <rect class="dg-box" x="544" y="44" width="220" height="52" rx="6"/>
+        <text class="dg-h" x="654" y="76" text-anchor="middle">3 · Prévisualisation</text>
+        <rect class="dg-chip" x="544" y="112" width="220" height="180" rx="6"/>
+        <text class="dg-t" x="558" y="136">une URL par pull request</text>
+        <text class="dg-t" x="558" y="155">jeu de démonstration figé</text>
+        <text class="dg-t" x="558" y="174">revue produit et design</text>
+        <text class="dg-t" x="558" y="193">parcours critiques rejoués</text>
+        <text class="dg-s" x="558" y="219">détruite à la fermeture</text>
+        <text class="dg-s" x="558" y="237">de la pull request</text>
+
+        <rect class="dg-box" x="804" y="44" width="220" height="52" rx="6"/>
+        <text class="dg-h" x="914" y="76" text-anchor="middle">4 · Recette</text>
+        <rect class="dg-chip" x="804" y="112" width="220" height="180" rx="6"/>
+        <text class="dg-t" x="818" y="136">déploiement auto depuis main</text>
+        <text class="dg-t" x="818" y="155">migrations appliquées</text>
+        <text class="dg-t" x="818" y="174">données synthétiques</text>
+        <text class="dg-t" x="818" y="193">tests de bout en bout</text>
+        <text class="dg-t" x="818" y="212">test de charge avant jalon</text>
+        <text class="dg-s" x="818" y="238">même image que la prod</text>
+        <text class="dg-s" x="818" y="256">jamais reconstruite</text>
+
+        <rect class="dg-sys" x="1064" y="44" width="220" height="52" rx="6"/>
+        <text class="dg-h" x="1174" y="76" text-anchor="middle">5 · Production</text>
+        <rect class="dg-chip" x="1064" y="112" width="220" height="180" rx="6"/>
+        <text class="dg-t" x="1078" y="136">migration d'abord</text>
+        <text class="dg-t" x="1078" y="155">déploiement progressif</text>
+        <text class="dg-t" x="1078" y="174">drapeaux de fonctionnalité</text>
+        <text class="dg-t" x="1078" y="193">surveillance 15 minutes</text>
+        <text class="dg-t" x="1078" y="212">retour arrière en 1 commande</text>
+        <text class="dg-s" x="1078" y="238">déployer n'est pas publier</text>
+
+        <line class="dg-l" x1="244" y1="70" x2="278" y2="70" marker-end="url(#p1)"/>
+        <text class="dg-a" x="261" y="32" text-anchor="middle">tout est vert</text>
+        <line class="dg-l" x1="504" y1="70" x2="538" y2="70" marker-end="url(#p1)"/>
+        <text class="dg-a" x="521" y="32" text-anchor="middle">déploiement auto</text>
+        <line class="dg-l" x1="764" y1="70" x2="798" y2="70" marker-end="url(#p1)"/>
+        <text class="dg-a" x="781" y="32" text-anchor="middle">revue puis fusion</text>
+        <line class="dg-l" x1="1024" y1="70" x2="1058" y2="70" marker-end="url(#p1)"/>
+        <text class="dg-a" x="1041" y="32" text-anchor="middle">feu vert manuel</text>
+
+        <rect class="dg-box" x="404" y="340" width="600" height="50" rx="6"/>
+        <text class="dg-c" x="704" y="362" text-anchor="middle">Observabilité — traces, erreurs, profondeur de la file, âge du plus vieux travail</text>
+        <text class="dg-s" x="704" y="379" text-anchor="middle">c'est ici qu'on apprend qu'un CV est bloqué : il ne lève aucune erreur</text>
+
+        <rect class="dg-flag" x="1064" y="340" width="220" height="50" rx="6"/>
+        <text class="dg-c" x="1174" y="362" text-anchor="middle">Retour arrière</text>
+        <text class="dg-s" x="1174" y="379" text-anchor="middle">moins de 2 minutes</text>
+
+        <polyline class="dg-l" points="1174,292 1174,318 704,318 704,336" marker-end="url(#p1)"/>
+        <text class="dg-a" x="940" y="311" text-anchor="middle">signaux de production</text>
+        <line class="dg-l" x1="1004" y1="365" x2="1058" y2="365" marker-end="url(#p1)"/>
+        <polyline class="dg-l" points="404,365 134,365 134,298" marker-end="url(#p1)"/>
+        <text class="dg-a" x="269" y="357" text-anchor="middle">une alerte devient un correctif</text>
+      </svg>
+    </div>
+    <figcaption>L'image construite à l'étape 2 est celle qui va en recette puis en production — jamais reconstruite entre deux environnements, sinon on ne teste pas ce qu'on déploie. La barrière qui compte le plus est la dernière ligne de l'étape 2 : l'évaluation sur le corpus, détaillée en figure 3.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="shead">
+    <p class="eyebrow">Environnements</p>
+    <h2>Quatre environnements, et une règle sur les données</h2>
+  </div>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>Environnement</th><th>Qui s'en sert</th><th>Données</th><th>Durée de vie</th><th>Déploiement</th></tr></thead>
+    <tbody>
+      <tr><td>Local</td><td>Développeurs</td><td>Jeu synthétique, généré</td><td>Permanente</td><td>Manuel</td></tr>
+      <tr><td>Prévisualisation</td><td>Revue, produit, design</td><td>Jeu de démonstration figé</td><td>Celle de la pull request</td><td>Auto à chaque envoi</td></tr>
+      <tr><td>Recette</td><td>Équipe, tests, charge</td><td>Synthétique à volume réaliste</td><td>Permanente</td><td>Auto depuis <code>main</code></td></tr>
+      <tr><td>Production</td><td>Tout le monde</td><td>Réelles</td><td>Permanente</td><td>Bouton, puis auto</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="prose"><strong>Aucune donnée de production ne descend jamais dans un autre environnement.</strong> C'est une règle absolue ici, pas une bonne pratique générale : un CV est une donnée personnelle, et le cahier des charges impose déjà que l'accès soit limité au cadre du consentement. Copier la base de production en recette, geste banal ailleurs, serait une fuite.</p>
+  <p class="prose">La conséquence pratique est qu'il faut <strong>fabriquer un générateur de données</strong> : des profils, des offres, des candidatures, des tentatives de test crédibles et volumineux. C'est une journée de travail, et elle rend service tous les jours ensuite. Le corpus de CV réels destiné aux mesures est une chose distincte : il vit à part, avec un accès restreint et nominatif.</p>
+</section>
+
+<section>
+  <div class="shead">
+    <p class="eyebrow">Figure 2</p>
+    <h2>Migrer sans coupure</h2>
+    <p class="prose">C'est la cause numéro un d'interruption dans une équipe qui grandit, et le sujet le plus souvent découvert trop tard. Le principe : à aucun instant le schéma ne doit être incompatible avec la version précédente du code — sinon le retour arrière est impossible au moment précis où on en a besoin.</p>
+  </div>
+  <figure>
+    <div class="scroller">
+      <svg class="diagram" viewBox="0 0 1160 400" style="min-width:1020px;width:100%" role="img" aria-label="Migration en quatre phases : expansion du schéma, double écriture, bascule de lecture avec remplissage des anciennes lignes, puis contraction. À chaque phase, la version du code déployée reste compatible avec le schéma précédent.">
+        <defs>
+          <marker id="p2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <polygon points="0,1 10,5 0,9" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <rect class="dg-band" x="20" y="62" width="1122" height="110" rx="8"/>
+        <rect class="dg-band" x="20" y="192" width="1122" height="110" rx="8"/>
+        <text class="dg-s" x="30" y="112">SCHÉMA</text>
+        <text class="dg-s" x="30" y="128">DE LA BASE</text>
+        <text class="dg-s" x="30" y="242">VERSION</text>
+        <text class="dg-s" x="30" y="258">DÉPLOYÉE</text>
+
+        <text class="dg-h" x="265" y="42" text-anchor="middle">1 · Expansion</text>
+        <text class="dg-h" x="519" y="42" text-anchor="middle">2 · Double écriture</text>
+        <text class="dg-h" x="773" y="42" text-anchor="middle">3 · Bascule</text>
+        <text class="dg-h" x="1027" y="42" text-anchor="middle">4 · Contraction</text>
+
+        <rect class="dg-box" x="150" y="76" width="230" height="82" rx="6"/>
+        <text class="dg-t" x="265" y="103" text-anchor="middle">le nouveau champ est ajouté,</text>
+        <text class="dg-t" x="265" y="120" text-anchor="middle">facultatif, index créé</text>
+        <text class="dg-t" x="265" y="137" text-anchor="middle">sans verrouiller la table</text>
+
+        <rect class="dg-box" x="404" y="76" width="230" height="82" rx="6"/>
+        <text class="dg-t" x="519" y="112" text-anchor="middle">les deux champs reçoivent</text>
+        <text class="dg-t" x="519" y="129" text-anchor="middle">les écritures</text>
+
+        <rect class="dg-box" x="658" y="76" width="230" height="82" rx="6"/>
+        <text class="dg-t" x="773" y="103" text-anchor="middle">remplissage des anciennes</text>
+        <text class="dg-t" x="773" y="120" text-anchor="middle">lignes par petits lots,</text>
+        <text class="dg-t" x="773" y="137" text-anchor="middle">en arrière-plan</text>
+
+        <rect class="dg-box" x="912" y="76" width="230" height="82" rx="6"/>
+        <text class="dg-t" x="1027" y="112" text-anchor="middle">l'ancien champ est supprimé</text>
+        <text class="dg-s" x="1027" y="131" text-anchor="middle">plus aucun code ne le lit</text>
+
+        <rect class="dg-sys" x="150" y="206" width="230" height="82" rx="6"/>
+        <text class="dg-c" x="265" y="235" text-anchor="middle">version N</text>
+        <text class="dg-t" x="265" y="256" text-anchor="middle">ignore le nouveau champ</text>
+
+        <rect class="dg-sys" x="404" y="206" width="230" height="82" rx="6"/>
+        <text class="dg-c" x="519" y="235" text-anchor="middle">version N+1</text>
+        <text class="dg-t" x="519" y="256" text-anchor="middle">écrit les deux, lit l'ancien</text>
+
+        <rect class="dg-sys" x="658" y="206" width="230" height="82" rx="6"/>
+        <text class="dg-c" x="773" y="235" text-anchor="middle">version N+2</text>
+        <text class="dg-t" x="773" y="256" text-anchor="middle">écrit les deux, lit le nouveau</text>
+
+        <rect class="dg-sys" x="912" y="206" width="230" height="82" rx="6"/>
+        <text class="dg-c" x="1027" y="235" text-anchor="middle">version N+3</text>
+        <text class="dg-t" x="1027" y="256" text-anchor="middle">n'utilise que le nouveau</text>
+
+        <line class="dg-l" x1="380" y1="117" x2="398" y2="117" marker-end="url(#p2)"/>
+        <line class="dg-l" x1="634" y1="117" x2="652" y2="117" marker-end="url(#p2)"/>
+        <line class="dg-l" x1="888" y1="117" x2="906" y2="117" marker-end="url(#p2)"/>
+        <line class="dg-l" x1="380" y1="247" x2="398" y2="247" marker-end="url(#p2)"/>
+        <line class="dg-l" x1="634" y1="247" x2="652" y2="247" marker-end="url(#p2)"/>
+        <line class="dg-l" x1="888" y1="247" x2="906" y2="247" marker-end="url(#p2)"/>
+
+        <rect class="dg-box dg-dash" x="20" y="330" width="1122" height="50" rx="6" fill="none"/>
+        <text class="dg-t" x="581" y="352" text-anchor="middle">À chaque colonne, la version précédente du code fonctionne encore avec le schéma en place.</text>
+        <text class="dg-s" x="581" y="370" text-anchor="middle">C'est exactement ce qui rend le retour arrière possible à tout moment — sans cette discipline, déployer devient irréversible.</text>
+      </svg>
+    </div>
+    <figcaption>Quatre déploiements pour un renommage de colonne, là où un seul suffirait « en théorie ». Le coût est réel et il est assumé : c'est le prix d'un retour arrière qui marche vraiment. Le corollaire pratique : une migration et le code qui l'utilise ne partent jamais dans le même déploiement.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="shead">
+    <p class="eyebrow">Figure 3</p>
+    <h2>Le pipeline que personne d'autre n'a</h2>
+    <p class="prose">Un pipeline de livraison classique ne sait pas tester un changement de modèle ou de consigne. C'est pourtant, chez nous, un changement aussi risqué qu'une modification de code — et bien plus silencieux : rien ne plante, la qualité baisse simplement.</p>
+  </div>
+  <figure>
+    <div class="scroller">
+      <svg class="diagram" viewBox="0 0 1320 320" style="min-width:1120px;width:100%" role="img" aria-label="Tout changement de modèle, de consigne ou de code d'extraction déclenche un rejeu sur le corpus figé, dont les mesures sont comparées à la référence. Au-delà du seuil de régression la fusion est bloquée ; sinon elle est autorisée et la nouvelle chaîne passe d'abord en mode ombre.">
+        <defs>
+          <marker id="p3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <polygon points="0,1 10,5 0,9" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <rect class="dg-box" x="24" y="40" width="170" height="58" rx="6"/>
+        <text class="dg-c" x="109" y="65" text-anchor="middle">Changement</text>
+        <text class="dg-c" x="109" y="81" text-anchor="middle">de modèle</text>
+        <rect class="dg-box" x="24" y="124" width="170" height="58" rx="6"/>
+        <text class="dg-c" x="109" y="149" text-anchor="middle">Changement</text>
+        <text class="dg-c" x="109" y="165" text-anchor="middle">de consigne</text>
+        <rect class="dg-box" x="24" y="208" width="170" height="58" rx="6"/>
+        <text class="dg-c" x="109" y="233" text-anchor="middle">Changement</text>
+        <text class="dg-c" x="109" y="249" text-anchor="middle">de code</text>
+
+        <rect class="dg-sys" x="234" y="108" width="180" height="94" rx="6"/>
+        <text class="dg-h" x="324" y="140" text-anchor="middle">Rejeu sur le</text>
+        <text class="dg-h" x="324" y="157" text-anchor="middle">corpus figé</text>
+        <text class="dg-s" x="324" y="177" text-anchor="middle">50 CV annotés</text>
+
+        <rect class="dg-sys" x="454" y="108" width="180" height="94" rx="6"/>
+        <text class="dg-c" x="544" y="134" text-anchor="middle">Mesures</text>
+        <text class="dg-s" x="544" y="152" text-anchor="middle">exactitude par champ</text>
+        <text class="dg-s" x="544" y="168" text-anchor="middle">taux d'échec · coût</text>
+        <text class="dg-s" x="544" y="184" text-anchor="middle">latence</text>
+
+        <rect class="dg-box" x="674" y="108" width="160" height="94" rx="6"/>
+        <text class="dg-c" x="754" y="140" text-anchor="middle">Écart avec</text>
+        <text class="dg-c" x="754" y="156" text-anchor="middle">la référence</text>
+        <text class="dg-s" x="754" y="176" text-anchor="middle">seuil versionné</text>
+
+        <rect class="dg-flag" x="874" y="26" width="200" height="70" rx="6"/>
+        <text class="dg-c" x="974" y="54" text-anchor="middle">Barrière rouge</text>
+        <text class="dg-s" x="974" y="74" text-anchor="middle">fusion bloquée</text>
+
+        <rect class="dg-sys" x="874" y="214" width="200" height="70" rx="6"/>
+        <text class="dg-c" x="974" y="242" text-anchor="middle">Fusion autorisée</text>
+        <text class="dg-s" x="974" y="262" text-anchor="middle">référence mise à jour</text>
+
+        <rect class="dg-box" x="1114" y="214" width="190" height="70" rx="6"/>
+        <text class="dg-c" x="1209" y="238" text-anchor="middle">Mode ombre</text>
+        <text class="dg-s" x="1209" y="256" text-anchor="middle">les deux chaînes tournent,</text>
+        <text class="dg-s" x="1209" y="271" text-anchor="middle">une seule compte</text>
+
+        <line class="dg-l" x1="194" y1="69" x2="214" y2="69"/>
+        <line class="dg-l" x1="194" y1="153" x2="214" y2="153"/>
+        <line class="dg-l" x1="194" y1="237" x2="214" y2="237"/>
+        <line class="dg-l" x1="214" y1="69" x2="214" y2="237"/>
+        <line class="dg-l" x1="214" y1="155" x2="228" y2="155" marker-end="url(#p3)"/>
+
+        <line class="dg-l" x1="414" y1="155" x2="448" y2="155" marker-end="url(#p3)"/>
+        <line class="dg-l" x1="634" y1="155" x2="668" y2="155" marker-end="url(#p3)"/>
+
+        <polyline class="dg-l" points="834,140 854,140 854,61 868,61" marker-end="url(#p3)"/>
+        <text class="dg-a" x="862" y="112">au-delà du seuil</text>
+        <polyline class="dg-l" points="834,170 854,170 854,249 868,249" marker-end="url(#p3)"/>
+        <text class="dg-a" x="862" y="300">dans la tolérance</text>
+        <line class="dg-l" x1="1074" y1="249" x2="1108" y2="249" marker-end="url(#p3)"/>
+      </svg>
+    </div>
+    <figcaption>Le corpus annoté n'est pas un exercice de cadrage : c'est un <strong>harnais de non-régression permanent</strong>, au même titre qu'une suite de tests. Changer de fournisseur d'OCR, ajuster une consigne, passer à un modèle moins cher — chacun de ces gestes se mesure avant d'atteindre un utilisateur. Le mode ombre ajoute une seconde vérification sur du trafic réel, sans exposer personne au nouveau résultat.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="shead">
+    <p class="eyebrow">Non négociable</p>
+    <h2>Cinq règles</h2>
+  </div>
+  <div class="rules">
+    <div class="rule"><span class="num">1</span><div class="txt"><h3><code>main</code> est toujours déployable</h3><p>Branches courtes, fusionnées en moins de deux jours. Pas de branches de version qui vivent des semaines : à trois développeurs, une branche longue coûte plus cher en résolution de conflits qu'elle ne rapporte en isolation.</p></div></div>
+    <div class="rule"><span class="num">2</span><div class="txt"><h3>Une migration ne casse jamais la version précédente</h3><p>Expansion puis contraction, jamais les deux dans le même déploiement. C'est ce qui fait la différence entre un retour arrière et une nuit blanche.</p></div></div>
+    <div class="rule"><span class="num">3</span><div class="txt"><h3>Aucune donnée de production ailleurs qu'en production</h3><p>Pas de copie de base en recette, pas de CV réel dans un environnement de test. Générateur de données synthétiques dès le socle.</p></div></div>
+    <div class="rule"><span class="num">4</span><div class="txt"><h3>Un changement de modèle est un changement de code</h3><p>Même revue, même intégration continue, même barrière qualité. Une consigne modifiée dans un coin sans mesure est la manière la plus silencieuse de dégrader le produit.</p></div></div>
+    <div class="rule"><span class="num">5</span><div class="txt"><h3>Déployer n'est pas publier</h3><p>Le code part en production derrière un drapeau éteint. On déploie souvent et sans cérémonie ; on allume la fonctionnalité quand le produit est prêt, et on l'éteint sans redéployer si elle se comporte mal.</p></div></div>
+  </div>
+</section>
+
+<section>
+  <div class="shead">
+    <p class="eyebrow">Outillage</p>
+    <h2>Ce que ça coûte concrètement</h2>
+    <p class="prose">Rien de tout cela n'est cher. L'essentiel est gratuit ou compris dans ce que nous payons déjà.</p>
+  </div>
+  <div class="stack">
+    <b>Intégration continue</b> — GitHub Actions, inclus avec le dépôt<br>
+    <b>Images</b> — conteneurs OCI, registre GitHub, construites une fois et promues<br>
+    <b>Migrations</b> — outil versionné de l'ORM retenu, jamais de modification manuelle en base<br>
+    <b>Tests d'intégration</b> — Postgres jetable démarré par la CI, pas de base partagée<br>
+    <b>Parcours de bout en bout</b> — Playwright, cinq parcours critiques seulement<br>
+    <b>Secrets</b> — gestionnaire du fournisseur, plus un détecteur de secrets en CI<br>
+    <b>Dépendances</b> — mises à jour automatiques groupées une fois par semaine<br>
+    <b>Erreurs et traces</b> — Sentry et OpenTelemetry, offres gratuites au démarrage<br>
+    <b>Drapeaux de fonctionnalité</b> — une table en base et un cache, pas un service payant<br>
+    <b>Charge</b> — k6, avant chaque jalon, pas en continu
+  </div>
+  <p class="prose">Une contrainte qui compte plus qu'elle n'en a l'air : <strong>l'intégration continue doit rester sous dix minutes</strong>. Au-delà, les gens la contournent, et une barrière contournée ne protège plus rien. Cela impose de mettre en cache les dépendances, de paralléliser, et de ne lancer les parcours complets que sur les prévisualisations et sur <code>main</code>.</p>
+</section>
+
+<section>
+  <div class="shead">
+    <p class="eyebrow">Signaux</p>
+    <h2>Ce qu'on surveille, et le piège</h2>
+  </div>
+  <p class="prose">Le réflexe habituel est de surveiller le taux d'erreur et le temps de réponse. Ils sont nécessaires mais ils <strong>ne voient rien de notre risque principal</strong> : dans une chaîne asynchrone, un CV qui n'est jamais traité ne produit aucune erreur. Il ne se passe simplement rien, et personne ne le sait avant qu'un recruteur ne s'en plaigne.</p>
+  <div class="slo">
+    <div><span class="k">Le signal qui compte</span><span class="v">Âge du plus vieux travail</span><span class="n">en file d'attente. Alerte au-delà de dix minutes — bien avant qu'un utilisateur ne le remarque</span></div>
+    <div><span class="k">Parcours candidat</span><span class="v">95 % des CV traités en moins de 3 min</span><span class="n">du dépôt à l'écran de correction</span></div>
+    <div><span class="k">Page publique d'offre</span><span class="v">sous 1,5 s en 3G simulée</span><span class="n">mesuré sur un vrai profil réseau, pas en fibre au bureau</span></div>
+    <div><span class="k">Tests en ligne</span><span class="v">zéro tentative perdue</span><span class="n">toute réponse enregistrée est rejouable ; une tentative perdue est un incident, pas une statistique</span></div>
+  </div>
+  <p class="prose">Et quatre indicateurs sur l'équipe elle-même, gratuits à mesurer dès le premier jour : délai entre un commit et sa mise en production, fréquence de déploiement, part des déploiements qui provoquent un incident, temps de rétablissement. Ils disent si le pipeline sert l'équipe ou s'il la freine — et c'est la seule façon de savoir quand il faut l'améliorer.</p>
+</section>
+
+<section>
+  <div class="shead">
+    <p class="eyebrow">Progression</p>
+    <h2>Ce qu'on outille, et quand</h2>
+    <p class="prose">Tout construire en novembre serait une perte de temps. Tout reporter serait pire.</p>
+  </div>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>Étape</th><th>Quand</th><th>Ce qu'on ajoute</th></tr></thead>
+    <tbody>
+      <tr><td>Socle</td><td>Nov. 2026</td><td><code>main</code> déployable · CI style, types, tests · image unique promue · migrations versionnées et testées à l'aller comme au retour · recette automatique · production sur bouton · suivi des erreurs · générateur de données synthétiques</td></tr>
+      <tr><td>Barrière IA</td><td>Nov. 2026</td><td>Corpus figé en dépôt séparé · rejeu automatique à chaque changement touchant l'extraction · seuil de régression versionné. <strong>À poser en même temps que le socle</strong> — cette barrière n'a de valeur que si elle existe avant la première optimisation</td></tr>
+      <tr><td>Pilote</td><td>Janv. 2027</td><td>Prévisualisation par pull request · cinq parcours de bout en bout · drapeaux de fonctionnalité · alerte sur l'âge de la file · restauration de sauvegarde testée une fois par mois · procédure d'incident écrite</td></tr>
+      <tr><td>Croissance</td><td>2027</td><td>Déploiement progressif · mode ombre pour les changements de chaîne documentaire · test de charge automatisé avant jalon · objectifs de service suivis · astreinte légère</td></tr>
+      <tr><td>Échelle</td><td>2028 et au-delà</td><td>Plusieurs régions · workers dimensionnés automatiquement sur la profondeur de la file · déploiement canari avec retour arrière déclenché par les objectifs de service</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="prose">La seule ligne que je déplacerais vers le haut si le calendrier se tendait, c'est la <strong>restauration de sauvegarde</strong> : elle est listée au pilote, mais la faire une première fois dès novembre coûte une demi-journée et vérifie une hypothèse dont dépend toute l'entreprise.</p>
+</section>
+
+<footer>
+  Document de travail · phase de cadrage, septembre 2026. Propositions ouvertes à discussion, cohérentes avec la carte d'architecture et les documents du dépôt. Aucun outil n'est contractualisé.
+</footer>
+
+</div>

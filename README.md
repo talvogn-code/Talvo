@@ -22,6 +22,10 @@ démontrant la valeur du tri automatique des CV et des tests en ligne.
 | [`docs/04-ia-traitement-documentaire.md`](docs/04-ia-traitement-documentaire.md) | IA, chaîne IDP et architecture pour l'échelle |
 | [`docs/05-strategie-modeles-ia.md`](docs/05-strategie-modeles-ia.md) | Choix de modèles, coût et garde-fous anti-hallucination |
 | [`docs/06-analyse-zety.md`](docs/06-analyse-zety.md) | Analyse d'un produit de référence : ce qui est transposable |
+| [`docs/07-angles-morts.md`](docs/07-angles-morts.md) | Sujets absents du cadrage, par criticité |
+| [`docs/08-note-operations.md`](docs/08-note-operations.md) | Note non technique : besoins, coûts, risques |
+| [`docs/presentation/architecture.html`](docs/presentation/architecture.html) | Carte technique de bout en bout (schémas) |
+| [`docs/presentation/pipeline.html`](docs/presentation/pipeline.html) | Pipeline de livraison : du commit à la production |
 
 ## État
 
