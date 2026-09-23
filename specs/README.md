@@ -20,10 +20,10 @@ La méthode est décrite dans [`CONTRIBUTING.md`](../CONTRIBUTING.md), les exige
 | [`SPEC-010`](SPEC-010-tests-en-ligne.md) | Tests en ligne | `en revue` | `M4` | P0 | `EXI-OFF-08`, `EXI-TST-01`, `EXI-TST-02`, `EXI-TST-03`, `EXI-TST-04`, `EXI-TST-05`, `EXI-TST-06`, `EXI-TST-07`, `EXI-TST-09`, `EXI-TST-10`, `EXI-TST-11`, `EXI-TST-12` | `SPEC-001`, `SPEC-006`, `SPEC-014` |
 | [`SPEC-011`](SPEC-011-shortlist-et-fiche-candidat.md) | Shortlist et fiche candidat | `brouillon` | `M4` | P0 | `EXI-PRS-01`, `EXI-PRS-02`, `EXI-PRS-03`, `EXI-CND-06`, `EXI-TST-08` | `SPEC-008`, `SPEC-010` |
 | [`SPEC-012`](SPEC-012-tableaux-de-bord.md) | Tableaux de bord | `brouillon` | `M4` | P0 | `EXI-DSH-01`, `EXI-DSH-02`, `NFR-13`, `NFR-14` | `SPEC-007`, `SPEC-011` |
-| [`SPEC-013`](SPEC-013-referentiels-metier.md) | Référentiels métier | `brouillon` | `M1` | P0 | `EXI-MCH-10`, `EXI-ADM-03`, `NFR-11` | — |
+| [`SPEC-013`](SPEC-013-referentiels-metier.md) | Référentiels métier | `en revue` | `M1` | P0 | `EXI-MCH-10`, `EXI-ADM-03`, `NFR-11` | — |
 | [`SPEC-014`](SPEC-014-notifications.md) | Notifications | `brouillon` | `M1` | P0 | `EXI-TST-01` | `SPEC-001` |
 | [`SPEC-015`](SPEC-015-administration-et-moderation.md) | Administration et modération | `brouillon` | `M5` | P0 | `EXI-CPT-05`, `EXI-ADM-02`, `EXI-ADM-04`, `EXI-ADM-05`, `NFR-18` | `SPEC-005` |
-| [`SPEC-016`](SPEC-016-observabilite-et-indicateurs.md) | Observabilité et indicateurs | `brouillon` | `M1` | P0 | `NFR-08`, `NFR-09`, `NFR-10`, `NFR-12`, `NFR-17` | — |
+| [`SPEC-016`](SPEC-016-observabilite-et-indicateurs.md) | Observabilité et indicateurs | `en revue` | `M1` | P0 | `NFR-08`, `NFR-09`, `NFR-10`, `NFR-12`, `NFR-17` | — |
 | [`SPEC-017`](SPEC-017-premium-et-visibilite.md) | Premium et visibilité | `brouillon` | `M7` | P1 | `EXI-CPT-06`, `EXI-CV-09`, `EXI-CV-10`, `EXI-CV-11`, `EXI-OFF-06`, `EXI-MON-01`, `EXI-MON-03` | `SPEC-004`, `SPEC-008` |
 | [`SPEC-018`](SPEC-018-messagerie.md) | Messagerie | `brouillon` | `M7` | P1 | `EXI-MON-02`, `EXI-MON-04` | `SPEC-007`, `SPEC-017` |
 
