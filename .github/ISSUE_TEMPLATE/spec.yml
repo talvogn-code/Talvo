@@ -1,0 +1,28 @@
+name: Proposition de spec
+description: Demander l'écriture ou la modification d'une spécification
+title: "[spec] "
+labels: ["spec"]
+body:
+  - type: textarea
+    id: besoin
+    attributes:
+      label: Le besoin
+      description: Quel comportement manque ou doit changer, et pour qui.
+    validations: { required: true }
+  - type: input
+    id: exigences
+    attributes:
+      label: Exigences concernées
+      description: Identifiants du registre, séparés par des virgules (EXI-xxx, NFR-xx).
+      placeholder: EXI-CV-01, NFR-07
+  - type: dropdown
+    id: jalon
+    attributes:
+      label: Jalon visé
+      options: [M0, M1, M2, M3, M4, M5, M6, M7]
+    validations: { required: true }
+  - type: textarea
+    id: ouvert
+    attributes:
+      label: Questions ouvertes connues
+      description: Notamment celles qui dépendent d'une décision technique non prise.

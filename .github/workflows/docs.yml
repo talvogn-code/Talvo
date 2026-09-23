@@ -1,0 +1,26 @@
+name: Cohérence de la documentation
+
+# Ne compile ni n'exécute aucun code applicatif : contrôle uniquement la cohérence
+# entre le registre des exigences, les specs et les décisions techniques.
+
+on:
+  push:
+    paths: ["specs/**", "docs/**", "scripts/check_specs.py", ".github/workflows/docs.yml"]
+  pull_request:
+    paths: ["specs/**", "docs/**", "scripts/check_specs.py", ".github/workflows/docs.yml"]
+
+jobs:
+  coherence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Contrôle des specs, des exigences et des décisions
+        run: python3 scripts/check_specs.py
+      - name: Vérifier que l'index des specs est à jour
+        run: |
+          python3 scripts/check_specs.py --index
+          git diff --exit-code specs/README.md \
+            || (echo "::error::specs/README.md n'est pas à jour — lancer : python3 scripts/check_specs.py --index" && exit 1)

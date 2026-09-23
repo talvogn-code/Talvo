@@ -1,0 +1,26 @@
+name: Décision technique
+description: Ouvrir un choix structurant à trancher
+title: "[adr] "
+labels: ["decision"]
+body:
+  - type: textarea
+    id: contexte
+    attributes:
+      label: Contexte
+      description: Ce qui rend cette décision nécessaire, et ce qu'elle engage.
+    validations: { required: true }
+  - type: textarea
+    id: options
+    attributes:
+      label: Options envisagées
+  - type: textarea
+    id: criteres
+    attributes:
+      label: Sur quoi trancherons-nous
+      description: De préférence des mesures, pas des préférences.
+  - type: dropdown
+    id: jalon
+    attributes:
+      label: À trancher avant la fin du jalon
+      options: [M0, M1, M2, M3, M4, M5, M6, M7]
+    validations: { required: true }

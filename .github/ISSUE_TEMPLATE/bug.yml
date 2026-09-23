@@ -1,0 +1,29 @@
+name: Défaut
+description: Un comportement qui contredit une spec approuvée
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: input
+    id: spec
+    attributes:
+      label: Spec et critère contredits
+      placeholder: SPEC-010, CA-3
+  - type: textarea
+    id: attendu
+    attributes:
+      label: Attendu / observé
+    validations: { required: true }
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: Étapes, environnement, données utilisées (jamais de données réelles).
+  - type: dropdown
+    id: gravite
+    attributes:
+      label: Gravité
+      options:
+        - critique — perte de données ou fuite
+        - majeure — parcours bloqué
+        - mineure — contournable
+    validations: { required: true }

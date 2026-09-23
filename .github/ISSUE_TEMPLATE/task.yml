@@ -1,0 +1,31 @@
+name: Tâche d'implémentation
+description: Une tranche de travail rattachée à une spec approuvée
+title: "[SPEC-0xx] "
+labels: ["implementation"]
+body:
+  - type: input
+    id: spec
+    attributes:
+      label: Spec
+      description: Elle doit être en statut « approuvée ».
+      placeholder: SPEC-003
+    validations: { required: true }
+  - type: input
+    id: criteres
+    attributes:
+      label: Critères d'acceptation couverts
+      placeholder: CA-1, CA-2, CA-5
+    validations: { required: true }
+  - type: textarea
+    id: perimetre
+    attributes:
+      label: Périmètre de la tranche
+      description: Ce que cette tâche fait, et ce qu'elle ne fait pas.
+    validations: { required: true }
+  - type: checkboxes
+    id: prealables
+    attributes:
+      label: Préalables
+      options:
+        - label: La spec est approuvée
+        - label: Les décisions dont elle dépend sont acceptées

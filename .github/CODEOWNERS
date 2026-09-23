@@ -1,0 +1,9 @@
+# Les specs, les décisions et la méthode exigent une revue des deux CTO.
+# Remplacer les espaces réservés par les identifiants GitHub réels.
+
+/specs/            @talvogn-code
+/docs/adr/         @talvogn-code
+/docs/09-jalons.md @talvogn-code
+/docs/10-registre-exigences.md @talvogn-code
+/CONTRIBUTING.md   @talvogn-code
+/CLAUDE.md         @talvogn-code
